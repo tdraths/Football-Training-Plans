@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Under 9 Soccer Coaching Plan — 32 Weeks</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f172a;color:#f1f5f9;min-height:100vh}
+  h1{font-size:20px;font-weight:800;color:#fff}
+  h2{font-size:18px;font-weight:800;color:#fff}
+  h3{font-size:13px;font-weight:700;color:#f1f5f9;line-height:1.3}
+  button{cursor:pointer;font-family:inherit}
+
+  /* Header */
+  #header{border-bottom:3px solid var(--accent);padding:20px 16px 16px;transition:background 0.3s}
+  .header-inner{max-width:860px;margin:0 auto}
+  .header-top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .header-controls{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center}
+  .rot-btn{padding:7px 18px;border-radius:8px;border:2px solid;font-weight:700;font-size:13px;background:transparent;color:#fff;transition:all 0.15s}
+  .rot-btn.active{border-color:var(--accent);background:var(--accent)}
+  .rot-btn:not(.active){border-color:rgba(255,255,255,0.2)}
+  .player-select-wrap{display:flex;align-items:center;gap:8px;margin-left:auto;background:rgba(255,255,255,0.1);border-radius:8px;padding:6px 12px}
+  .player-select-wrap label{font-size:12px}
+  #playerCount{background:transparent;border:none;color:#fff;font-size:13px;font-weight:700;outline:none}
+  #playerCount option{background:#1e293b}
+
+  /* Main grid */
+  #main{max-width:860px;margin:0 auto;padding:20px 14px}
+  .legend{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .legend-item{background:#1e293b;border-radius:8px;padding:5px 12px;font-size:11px;color:#94a3b8;display:flex;align-items:center;gap:5px}
+  .legend-hint{margin-left:auto;background:#1e293b;border-radius:8px;padding:5px 12px;font-size:11px;color:#64748b}
+  .week-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+  .week-card{background:#1e293b;border-radius:10px;padding:14px;cursor:pointer;transition:background 0.12s;border-left:4px solid var(--wc)}
+  .week-card:hover{background:#263548}
+  .week-badge{color:#fff;border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700;display:inline-block;margin-bottom:6px}
+  .week-drills{font-size:10px;color:#475569;margin-top:4px}
+
+  /* Modal overlay */
+  #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:50;overflow-y:auto;padding:16px}
+  #overlay.open{display:flex;align-items:flex-start;justify-content:center}
+  #modal{background:#0f172a;border-radius:14px;max-width:660px;width:100%;overflow:hidden;margin-bottom:20px}
+  .modal-header{padding:18px 20px}
+  .modal-header-top{display:flex;justify-content:space-between;align-items:flex-start}
+  .modal-label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.65);margin-bottom:3px;letter-spacing:1px}
+  .modal-controls{display:flex;gap:8px;align-items:center}
+  .edit-btn{padding:6px 12px;border:none;border-radius:7px;font-size:12px;font-weight:700;color:#fff;background:rgba(255,255,255,0.2);transition:all 0.15s}
+  .edit-btn.active{background:#fff}
+  .close-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:7px;width:30px;height:30px;font-size:14px;display:flex;align-items:center;justify-content:center}
+  .tags{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .tag{background:rgba(255,255,255,0.15);color:#fff;border-radius:5px;padding:2px 8px;font-size:11px}
+  .modal-body{padding:18px 20px}
+
+  /* Session blocks */
+  .session-block{background:#1e293b;border-radius:10px;padding:14px 15px;margin-bottom:10px}
+  .session-block-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .session-label{font-size:10px;font-weight:800;letter-spacing:1px}
+  .session-meta{display:flex;gap:6px;align-items:center}
+  .duration-badge{font-size:10px;color:#475569;background:#0f172a;border-radius:5px;padding:1px 7px}
+  .swap-btn{font-size:10px;background:#334155;border:none;color:#94a3b8;border-radius:5px;padding:2px 8px;font-weight:700;display:none}
+  .edit-mode .swap-btn{display:inline-block}
+  .drill-name{font-weight:700;font-size:14px;color:#f1f5f9}
+  .drill-name-warm{color:#fbbf24}
+  .drill-desc{margin:6px 0 0;color:#94a3b8;font-size:13px;line-height:1.6}
+  .ssformat{background:#064e3b;color:#34d399;border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700;display:inline-block;margin-bottom:8px}
+  .ssrules{margin:0;color:#cbd5e1;font-size:13px;line-height:1.6}
+  .ssrules strong{color:#6ee7b7}
+  .station-header-label{font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:8px}
+  .back-btn{width:100%;margin-top:6px;padding:11px;border:none;border-radius:9px;color:#fff;font-weight:700;font-size:14px}
+
+  /* SVG diagrams */
+  .diagram-label{font-size:11px;color:#64748b;margin:12px 0 4px;font-weight:600;letter-spacing:0.5px}
+  .diagram-wrap svg{width:100%;max-width:280px;display:block;border-radius:10px;border:2px solid #15803d}
+
+  /* Edit picker */
+  #picker{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:100;align-items:flex-end;justify-content:center}
+  #picker.open{display:flex}
+  #picker-inner{background:#1e293b;border-radius:14px 14px 0 0;max-width:660px;width:100%;max-height:75vh;overflow:hidden;display:flex;flex-direction:column}
+  .picker-header{padding:16px 20px 12px;border-bottom:1px solid #334155;display:flex;justify-content:space-between;align-items:center}
+  .picker-title{font-size:11px;color:#64748b;font-weight:700;letter-spacing:0.5px}
+  .picker-sub{font-size:12px;color:#94a3b8;margin-top:2px}
+  .picker-close{background:#334155;border:none;color:#94a3b8;border-radius:6px;width:28px;height:28px;font-size:13px}
+  .picker-list{overflow-y:auto;padding:12px 16px 20px;flex:1}
+  .picker-item{background:#0f172a;border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer;border:2px solid transparent;transition:border-color 0.1s}
+  .picker-item:hover{border-color:var(--accent)}
+  .picker-item-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+  .picker-item-name{font-weight:700;font-size:13px;color:#f1f5f9}
+  .picker-min{font-size:10px;color:#64748b;background:#1e293b;border-radius:5px;padding:1px 6px}
+  .picker-format{font-size:10px;color:#10b981;background:#064e3b;border-radius:5px;padding:1px 6px}
+  .picker-desc{margin:0;font-size:12px;color:#64748b;line-height:1.5}
+  .picker-diag{transform:scale(0.75);transform-origin:top left;height:110px;overflow:hidden;margin-top:4px}
+  .picker-empty{text-align:center;padding:30px;color:#475569}
+
+  @media(max-width:480px){
+    .header-controls{gap:8px}
+    .player-select-wrap{margin-left:0;width:100%}
+    .legend-hint{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <span style="font-size:28px">⚽</span>
+      <div>
+        <h1>Under 9 Soccer Coaching Plan</h1>
+        <p style="font-size:12px;color:var(--light);opacity:0.8;margin-top:2px">32 Weeks · 1 Hour Sessions · 14–24 Players · Tap a week to view &amp; edit</p>
+      </div>
+    </div>
+    <div class="header-controls">
+      <button class="rot-btn active" onclick="setRotation(1)" id="rot1">Rotation 1</button>
+      <button class="rot-btn" onclick="setRotation(2)" id="rot2">Rotation 2</button>
+      <div class="player-select-wrap">
+        <label for="playerCount" style="color:var(--light)">👦 Players today:</label>
+        <select id="playerCount" onchange="setPlayerCount(this.value)">
+          <option value="14">14 players</option>
+          <option value="15">15 players</option>
+          <option value="16" selected>16 players</option>
+          <option value="17">17 players</option>
+          <option value="18">18 players</option>
+          <option value="19">19 players</option>
+          <option value="20">20 players</option>
+          <option value="21">21 players</option>
+          <option value="22">22 players</option>
+          <option value="23">23 players</option>
+          <option value="24">24 players</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="main">
+  <div class="legend">
+    <div class="legend-item">🌡️ Warm-Up: 8 min</div>
+    <div class="legend-item">🔵 3 Stations × 8 min</div>
+    <div class="legend-item">🏆 Game: 15 min</div>
+    <div class="legend-hint">✏️ Tap any week to view session &amp; swap drills</div>
+  </div>
+  <div class="week-grid" id="weekGrid"></div>
+</div>
+
+<!-- Detail modal -->
+<div id="overlay" onclick="if(event.target===this)closeModal()">
+  <div id="modal">
+    <div class="modal-header" id="modalHeader">
+      <div class="modal-header-top">
+        <div>
+          <div class="modal-label" id="modalLabel"></div>
+          <h2 id="modalTheme"></h2>
+        </div>
+        <div class="modal-controls">
+          <button class="edit-btn" id="editBtn" onclick="toggleEdit()">✏️ Edit</button>
+          <button class="close-btn" onclick="closeModal()">✕</button>
+        </div>
+      </div>
+      <div class="tags" id="modalTags"></div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Swap picker -->
+<div id="picker" onclick="if(event.target===this)closePicker()">
+  <div id="picker-inner">
+    <div class="picker-header">
+      <div>
+        <div class="picker-title" id="pickerTitle"></div>
+        <div class="picker-sub" id="pickerSub"></div>
+      </div>
+      <button class="picker-close" onclick="closePicker()">✕</button>
+    </div>
+    <div class="picker-list" id="pickerList"></div>
+  </div>
+</div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────
+let rotation = 1;
+let playerCount = 16;
+let editMode = false;
+let openWeekIdx = null;
+let pendingSwap = null; // {type, stationIdx}
+let weekData = null; // populated after BASE_WEEKS defined
+
+// ─── COLOURS ─────────────────────────────────────────────────────────
+const ROT = {
+  1: { bg:'#1e3a5f', accent:'#3b82f6', light:'#dbeafe' },
+  2: { bg:'#1a3a2a', accent:'#10b981', light:'#d1fae5' }
+};
+
+// ─── SVG HELPERS ──────────────────────────────────────────────────────
+const SVG_NS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs={}, children=[]) {
+  const el = document.createElementNS(SVG_NS, tag);
+  for (const [k,v] of Object.entries(attrs)) el.setAttribute(k, v);
+  for (const c of children) if(c) el.appendChild(c);
+  return el;
+}
+const cone = (x,y,color='#f59e0b',size=7) => svgEl('polygon',{points:`${x},${y-size} ${x-size*0.7},${y+size*0.4} ${x+size*0.7},${y+size*0.4}`,fill:color,stroke:'#000','stroke-width':'0.5'});
+const ball = (x,y,r=6) => svgEl('g',{},[svgEl('circle',{cx:x,cy:y,r,fill:'#fff',stroke:'#222','stroke-width':'1'}),svgEl('circle',{cx:x,cy:y,r:r*0.45,fill:'#222',opacity:'0.15'})]);
+function player(x,y,label='P',color='#3b82f6',size=11) {
+  const g = svgEl('g');
+  g.appendChild(svgEl('circle',{cx:x,cy:y,r:size,fill:color,stroke:'#fff','stroke-width':'1.5'}));
+  const t = svgEl('text',{x,y:y+4,'text-anchor':'middle',fill:'#fff','font-size':'9','font-weight':'bold'});
+  t.textContent=label; g.appendChild(t); return g;
+}
+function arrow(x1,y1,x2,y2,color='#10b981',dashed=false) {
+  const dx=x2-x1,dy=y2-y1,len=Math.sqrt(dx*dx+dy*dy)||1;
+  const ux=dx/len,uy=dy/len,h=8;
+  const ax=x2-ux*h-uy*h*0.4,ay=y2-uy*h+ux*h*0.4,bx=x2-ux*h+uy*h*0.4,by=y2-uy*h-ux*h*0.4;
+  const g=svgEl('g');
+  const ln=svgEl('line',{x1,y1,x2,y2,stroke:color,'stroke-width':'2',opacity:'0.9'});
+  if(dashed) ln.setAttribute('stroke-dasharray','5,4');
+  g.appendChild(ln);
+  g.appendChild(svgEl('polygon',{points:`${x2},${y2} ${ax},${ay} ${bx},${by}`,fill:color}));
+  return g;
+}
+function goal(x,y,w=30,h=10,dir='top') {
+  if(dir==='top') return svgEl('rect',{x:x-w/2,y,width:w,height:h,fill:'none',stroke:'#fff','stroke-width':'2'});
+  return svgEl('rect',{x:x-w/2,y:y-h,width:w,height:h,fill:'none',stroke:'#fff','stroke-width':'2'});
+}
+function txt(x,y,str,color='#86efac',size=9) {
+  const t=svgEl('text',{x,y,'text-anchor':'middle',fill:color,'font-size':size});
+  t.textContent=str; return t;
+}
+function pitchSVG(w,h,children=[]) {
+  const svg=svgEl('svg',{width:'100%',viewBox:`0 0 ${w} ${h}`,style:`background:#166534;border-radius:10px;border:2px solid #15803d;display:block;max-width:${w}px`});
+  svg.appendChild(svgEl('rect',{x:'4',y:'4',width:w-8,height:h-8,fill:'none',stroke:'#15803d','stroke-width':'1.5'}));
+  for(const c of children) if(c) svg.appendChild(c);
+  return svg;
+}
+function makeDiagramWrap(svg) {
+  const lbl=document.createElement('div'); lbl.className='diagram-label'; lbl.textContent='📐 SETUP DIAGRAM';
+  const wrap=document.createElement('div'); wrap.className='diagram-wrap';
+  wrap.appendChild(lbl); wrap.appendChild(svg);
+  return wrap;
+}
+
+// ─── DIAGRAM BUILDERS ────────────────────────────────────────────────
+function diagBallTag() {
+  const children=[];
+  [40,80,120,160,200].forEach(x=>children.push(cone(x,20)));
+  [40,80,120,160,200].forEach(x=>children.push(cone(x,140)));
+  const px=[20,60,100,140,180,220],py=[60,90,75,100,65,85];
+  const cols=['#3b82f6','#ef4444','#3b82f6','#ef4444','#3b82f6','#ef4444'];
+  px.forEach((x,i)=>{ children.push(player(x,py[i],'P',cols[i])); children.push(ball(x+8,py[i]+12,5)); });
+  children.push(txt(120,155,'Every player has a ball — free movement'));
+  return makeDiagramWrap(pitchSVG(240,160,children));
+}
+function diagSoleRolls() {
+  const c=[player(60,70,'P1','#3b82f6'),ball(90,70,6),arrow(90,70,150,70,'#10b981'),player(180,70,'P2','#ef4444')];
+  const l1=svgEl('line',{x1:30,y1:50,x2:30,y2:90,stroke:'#f59e0b','stroke-width':'1.5','stroke-dasharray':'4,3'});
+  const l2=svgEl('line',{x1:210,y1:50,x2:210,y2:90,stroke:'#f59e0b','stroke-width':'1.5','stroke-dasharray':'4,3'});
+  c.push(l1,l2,txt(30,45,'Start','#fbbf24',8),txt(210,45,'End','#fbbf24',8),txt(120,105,'5m apart · sole-roll across'));
+  return makeDiagramWrap(pitchSVG(240,140,c));
+}
+function diagConeSlalom() {
+  const c=[cone(50,70),cone(80,70),cone(110,70),cone(140,70),cone(170,70),player(25,70,'P','#3b82f6'),ball(35,70,5)];
+  const path=svgEl('path',{d:'M40,70 Q65,50 80,70 Q95,90 110,70 Q125,50 140,70 Q155,90 170,70 L200,70',fill:'none',stroke:'#10b981','stroke-width':'2','stroke-dasharray':'6,3'});
+  c.push(path,arrow(195,70,215,70,'#10b981'),txt(130,120,'Weave between cones — 1m spacing'));
+  return makeDiagramWrap(pitchSVG(260,140,c));
+}
+function diagGatePassing() {
+  const c=[];
+  [[70,50],[130,40],[190,60],[60,110],[150,120],[200,100]].forEach(([x,y])=>{ c.push(cone(x-8,y),cone(x+8,y)); });
+  c.push(player(40,80,'P1','#3b82f6'),ball(55,80,5),arrow(58,78,62,52,'#10b981'),player(180,140,'P2','#ef4444'),txt(130,150,'Pass through as many gates as possible'));
+  return makeDiagramWrap(pitchSVG(260,160,c));
+}
+function diagTrianglePassing() {
+  const c=[player(110,30,'P1','#3b82f6'),player(50,130,'P2','#ef4444'),player(170,130,'P3','#10b981'),ball(85,85,5)];
+  c.push(arrow(110,42,60,118,'#fbbf24'),arrow(58,118,162,118,'#fbbf24'),arrow(162,118,116,42,'#fbbf24',true),txt(110,158,'8m per side · rotate direction on command'));
+  return makeDiagramWrap(pitchSVG(220,170,c));
+}
+function diagShooting() {
+  const c=[goal(120,10,50,12,'top'),player(80,80,'GK','#7c3aed',12)];
+  [[60,130],[120,140],[180,130]].forEach(([x,y],i)=>{ c.push(ball(x,y,5),arrow(x,y-5,[70,120,110][i],[30,20,25][i],'#ef4444')); });
+  [[60,140],[120,150],[180,140]].forEach(([x,y])=>c.push(player(x,y,'P','#3b82f6')));
+  c.push(txt(120,162,'Multiple angles · aim for corners'));
+  return makeDiagramWrap(pitchSVG(240,170,c));
+}
+function diagJockeying() {
+  const l1=svgEl('line',{x1:60,y1:20,x2:60,y2:130,stroke:'#f59e0b','stroke-width':'1.5','stroke-dasharray':'4,3'});
+  const l2=svgEl('line',{x1:130,y1:20,x2:130,y2:130,stroke:'#f59e0b','stroke-width':'1.5','stroke-dasharray':'4,3'});
+  const c=[l1,l2,player(90,110,'A','#3b82f6'),ball(90,97,5),arrow(90,97,90,50,'#3b82f6',true),player(90,40,'D','#ef4444'),arrow(90,52,90,65,'#ef4444'),txt(100,138,'3m lane · D jockeys, doesn\'t tackle')];
+  return makeDiagramWrap(pitchSVG(200,150,c));
+}
+function diag2v1() {
+  const c=[goal(110,10,50,12,'top'),player(75,90,'A1','#3b82f6'),player(145,100,'A2','#3b82f6'),player(110,60,'D','#ef4444'),ball(85,90,5),arrow(85,88,138,98,'#10b981'),arrow(145,98,120,25,'#10b981',true),txt(110,150,'A1 passes → A2 finishes past 1 defender')];
+  return makeDiagramWrap(pitchSVG(220,160,c));
+}
+function diagWidePlay() {
+  const l1=svgEl('line',{x1:30,y1:20,x2:30,y2:140,stroke:'#f59e0b','stroke-width':'1','stroke-dasharray':'3,3'});
+  const l2=svgEl('line',{x1:230,y1:20,x2:230,y2:140,stroke:'#f59e0b','stroke-width':'1','stroke-dasharray':'3,3'});
+  const c=[goal(130,10,50,12,'top'),player(30,100,'W','#3b82f6'),ball(42,100,5),player(120,80,'A1','#3b82f6'),player(150,95,'A2','#3b82f6'),arrow(42,98,30,25,'#10b981',true),arrow(120,78,115,30,'#3b82f6',true),arrow(150,93,145,30,'#3b82f6',true),l1,l2,txt(130,155,'Wide player delivers · runs to far/near post')];
+  return makeDiagramWrap(pitchSVG(260,170,c));
+}
+function diagCounterAttack() {
+  const c=[goal(130,10,50,12,'top'),goal(130,158,50,12,'bottom'),player(130,90,'GK','#7c3aed',12),player(80,130,'D','#ef4444'),player(190,45,'F','#3b82f6'),ball(115,90,5),arrow(120,88,185,50,'#10b981'),txt(130,150,'GK distributes quickly → forward runs in behind',`#86efac`,7)];
+  return makeDiagramWrap(pitchSVG(260,170,c));
+}
+function diagRondo() {
+  const pts=[[100,20],[175,65],[165,145],[100,175],[35,145],[25,65]];
+  const c=pts.map(([x,y])=>player(x,y,'P','#3b82f6',11));
+  c.push(player(100,100,'D','#ef4444',12),ball(140,48,5),arrow(140,46,168,66,'#fbbf24'));
+  return makeDiagramWrap(pitchSVG(200,190,c));
+}
+function diagFreeKick() {
+  const c=[goal(120,10,60,12,'top'),player(90,35,'GK','#7c3aed',11)];
+  [105,120,135].forEach(x=>c.push(player(x,75,'W','#ef4444',10)));
+  const ar=arrow(120,118,120,80,'#10b981'); ar.querySelector('line').setAttribute('stroke-dasharray','5,4');
+  c.push(player(120,110,'P','#3b82f6'),ball(120,122,5),ar,txt(120,150,'Chip over wall, aim for corners'));
+  return makeDiagramWrap(pitchSVG(240,160,c));
+}
+function diagCheckRun() {
+  const path=svgEl('path',{d:'M160,62 L160,100 L110,80',fill:'none',stroke:'#10b981','stroke-width':'2','stroke-dasharray':'5,3'});
+  const c=[player(160,60,'C','#3b82f6'),path,arrow(110,80,108,80,'#10b981'),cone(160,110),player(60,80,'Co','#7c3aed',12),ball(80,80,5),arrow(82,80,106,80,'#fbbf24'),txt(120,145,'Run away → check back sharp to receive')];
+  return makeDiagramWrap(pitchSVG(240,160,c));
+}
+function diagSmallSided4v4() {
+  const c=[goal(140,8,50,11,'top'),goal(140,168,50,11,'bottom')];
+  [[70,40],[140,60],[200,40],[120,50]].forEach(([x,y])=>c.push(player(x,y,'B','#ef4444',10)));
+  [[80,140],[140,125],[210,135],[150,145]].forEach(([x,y])=>c.push(player(x,y,'A','#3b82f6',10)));
+  c.push(ball(140,92,6));
+  return makeDiagramWrap(pitchSVG(280,180,c));
+}
+
+const DIAGRAMS = {
+  'Ball Tag': diagBallTag,'Traffic Lights':diagBallTag,'Compass Dribbling':diagBallTag,
+  'Chase the Tail':diagBallTag,'Hot Floor Dribbling':diagBallTag,'Relay Races':diagBallTag,
+  'Freestyle Circle':diagBallTag,'Numbers Dribbling':diagBallTag,'Team Chase the Tail':diagBallTag,
+  'Box-to-Box Sprint':diagBallTag,'Shooting Gallery Queue':diagShooting,
+  'Shadow Running':diagJockeying,'Loud Passing Circle':diagTrianglePassing,
+  'Partner Passing On-the-Move':diagGatePassing,'Circle Keep-Away (Multi)':diagRondo,
+  'Sole Rolls':diagSoleRolls,
+  'Juggling Challenges':diagBallTag,'Stepover Intro':diagConeSlalom,'Roll & Drag':diagConeSlalom,
+  'Cone Slalom (Multi-Lane)':diagConeSlalom,'The Sticky Dribble':diagConeSlalom,
+  'Knock Out (Big Grid)':diagBallTag,'Fast Feet Gates':diagGatePassing,'Mirror Dribbling':diagJockeying,
+  'Gate Passing (Big Grid)':diagGatePassing,'Passing Relay (Multi-Team)':diagGatePassing,
+  'Triangle Passing (Multiple)':diagTrianglePassing,'Partner Passing On-the-Move':diagGatePassing,
+  'Passing Rondo (3 groups)':diagRondo,
+  'Laces Strike (2 goals)':diagShooting,'Shoot on the Move (2 goals)':diagShooting,'Shooting Circuit':diagShooting,
+  'Jockeying Lane (Multi)':diagJockeying,'1v1 Defending Carousel':diagJockeying,'2v2 Press Drill (Multi)':diagJockeying,
+  'Ghost Runs (Multiple)':diag2v1,'Support Runs (Groups of 3)':diag2v1,'Check & Receive (Multi-Queue)':diagCheckRun,
+  'Wide Delivery (2 sides)':diagWidePlay,'Arrive to Finish (2 sides)':diagWidePlay,
+  'Counter-Attack Trigger':diagCounterAttack,'Corner Delivery (Multi)':diagWidePlay,'Wall Pass Drill (Multi)':diagTrianglePassing,
+  // legacy names from week data
+  'The Cruyff Turn':diagConeSlalom,'The Inside Hook':diagConeSlalom,'Turn & Beat':diagJockeying,
+  'Set Position & Ready Stance':diagBallTag,'Low Saves':diagShooting,'GK Distribution':diagCounterAttack,
+  'Find the Space':diagBallTag,'Ground Control':diagSoleRolls,'Air Control':diagSoleRolls,
+  'Turn on the Receive':diagCheckRun,'Forehead Contact':diagBallTag,'Throw-Head-Catch':diagBallTag,
+  'Defensive Heading':diagBallTag,'Name It to Claim It':diagGatePassing,'GK Voice Drill':diagShooting,
+  'Pressure Shout':diagBallTag,'Corner Delivery':diagWidePlay,'Corner Attack Runs':diagWidePlay,
+  'Free Kick Over the Wall':diagFreeKick,'Pass or Go? Freeze Game':diag2v1,'3-Zone Game':diagGatePassing,
+  'Overload Choices':diag2v1,'Trick Library':diagConeSlalom,'Street Football Rules':diagGatePassing,
+  'Trick Sequence Course':diagConeSlalom,'Ladder Footwork':diagConeSlalom,'Agility Tag':diagBallTag,
+  'Box of Doom':diagBallTag,'Spot the Option':diag2v1,'Decision Cards':diag2v1,'Heads-Up Game':diagGatePassing,
+  'Our Kick-Off Routine':diagSmallSided4v4,'Our Corner Play':diagWidePlay,'Values Reflection':diagBallTag,
+  'Skills Showcase':diagBallTag,'Favourite Drill':diagBallTag,'Coach vs Kids':diagSmallSided4v4,
+  'Player Awards Station':diagBallTag,'Dream Goal Game':diagShooting,'Shoot-Out Challenge':diagShooting,
+  'Two-Touch Rule Passing':diagGatePassing,'Speed Rondo':diagRondo,
+  'Third-Man Runs':diag2v1,'Cut Inside & Shoot':diagJockeying,'Combination Finish':diag2v1,
+  'Defensive Cover':diagJockeying,'Clearance Drill':diagShooting,'2v2 Defensive Pairs':diagJockeying,
+  'Win It & Go':diagCounterAttack,'3v3 Transition':diagCounterAttack,'Break-Out Passes':diagCounterAttack,
+  'Show Me Something':diagBallTag,'Grid Spacing':diagBallTag,'Shape Walk-Through':diagSmallSided4v4,
+  'Find the Gaps':diagGatePassing,'Receive & Protect':diagCheckRun,'Back to Goal Turns':diagCheckRun,
+  'Cushion Trap':diagSoleRolls,'Fast Break Waves':diag2v1,'Closing Down Angles':diagJockeying,
+  'Trigger Pressing':diagJockeying,'Wide to Centre':diagWidePlay,'Switch of Play':diagWidePlay,
+  'Wide Play 3v2':diagWidePlay,'Pressure Races':diagJockeying,
+  'Gate Passing':diagGatePassing,'Wall Pass Simulation':diagTrianglePassing,
+  'Passing Relay':diagGatePassing,'Triangle Passing':diagTrianglePassing,
+  'Laces Strike':diagShooting,'Shoot on the Move':diagShooting,'1v1 to Shoot':diagJockeying,
+  'Jockeying Lane':diagJockeying,'Touch Tackle':diagJockeying,'Channel Defence':diagJockeying,
+  'Support Runs':diag2v1,'Ghost Runs':diag2v1,'Check & Receive':diagCheckRun,
+  'Wide Delivery':diagWidePlay,'Arrive to Finish':diagWidePlay,
+  'Double Rondo':diagRondo,'Wall Pass Drill':diagTrianglePassing,'Overlap Runs':diag2v1,
+  'Pass & Follow':diagGatePassing,
+};
+
+// ─── DRILL LIBRARY ───────────────────────────────────────────────────
+const DRILL_LIBRARY = {
+  warmups:[
+    {name:'Traffic Lights',minPlayers:4,desc:"All dribble in grid. Red=stop, Yellow=slow, Green=fast. Add Orange=turn. Scales to any number — just make the grid bigger."},
+    {name:'Ball Tag',minPlayers:4,desc:"Every player has a ball. Coach calls body parts; players touch ball with that part. 2 min free dribble to close. Just expand the grid for big squads."},
+    {name:'Compass Dribbling',minPlayers:4,desc:"Coach calls North/South/East/West — players dribble to that end of grid. Add turns at each boundary. Works with any squad size."},
+    {name:'Chase the Tail',minPlayers:8,desc:"Bibs as tails. Grab others' while keeping yours. No ball. Spread across a large grid with 14–24 — brilliant chaos."},
+    {name:'Hot Floor Dribbling',minPlayers:4,desc:"Dribble as if floor is hot — fast feet, lots of touches. Count touches in 30 sec. Bigger squad = bigger grid."},
+    {name:'Relay Races',minPlayers:8,desc:"Teams of 4–6. Dribble down, back, tag next. Vary: roll, kick, carry. Run 4 lanes simultaneously for large groups."},
+    {name:'Shooting Gallery Queue',minPlayers:10,desc:"Two goals side by side, players in two queues. Each takes a shot, joins back. Keep both queues moving — no one stands still long."},
+    {name:'Team Chase the Tail',minPlayers:14,desc:"Divide into 2–3 teams with different bib colours. Teams try to collect only their colour tails. More strategy, same fun."},
+    {name:'Shadow Running',minPlayers:8,desc:"Pairs — one leads, one follows mirroring every movement. No ball. With large groups, run multiple pairs simultaneously."},
+    {name:'Loud Passing Circle',minPlayers:8,desc:"Groups of 6–8 in separate circles. Must call name before passing. Run 2–4 circles simultaneously. No name = no pass."},
+    {name:'Box-to-Box Sprint',minPlayers:8,desc:"Two queues, one each side. Sprint to receive rolled ball at far end, one touch back, join opposite queue. Fast-moving with large groups."},
+    {name:'Freestyle Circle',minPlayers:8,desc:"Players take turns in centre showing any skill. With large groups, run 2 circles of 8–10. No wrong answers. Others cheer."},
+    {name:'Circle Keep-Away (Multi)',minPlayers:14,desc:"Run 3 simultaneous circles of 5v1. Outside players pass; middle tries to win it. Rotate the middle player every 60 sec."},
+    {name:'Numbers Dribbling',minPlayers:14,desc:"Every player gets a number. Coach calls two numbers — those players race to a target cone while others keep dribbling. Keeps all players active."},
+    {name:'Partner Passing On-the-Move',minPlayers:14,desc:"All players in pairs spread across pitch. Pairs pass and move together — no stopping. Coach sets direction changes. No queuing."},
+  ],
+  stations:[
+    {name:'Sole Rolls',minPlayers:2,type:'ball mastery',desc:"Pairs 3m apart. Roll ball with sole, stop with sole. With 16–24 players: run 8–12 pairs simultaneously across a wide area."},
+    {name:'Juggling Challenges',minPlayers:1,type:'ball mastery',desc:"Personal: beat your own record. Foot, thigh, anywhere. Every player has a ball and works simultaneously. Perfect for any group size."},
+    {name:'Stepover Intro',minPlayers:1,type:'ball mastery',desc:"Circle foot over ball, push the other way. Still → slow → at speed. Every player works at their own pace. No waiting."},
+    {name:'Roll & Drag',minPlayers:1,type:'ball mastery',desc:"Sole roll forward then drag back. Rhythm: roll, drag. Every player has their own ball — scales to 24 easily."},
+    {name:'Cone Slalom (Multi-Lane)',minPlayers:4,type:'dribbling',desc:"Set up 4–6 parallel slalom lanes. Players cycle through. With 16–24 players, 4 lanes of 4–6 keeps everyone active."},
+    {name:'The Sticky Dribble',minPlayers:8,type:'dribbling',desc:"Large 20x20 grid. All players dribble simultaneously — no queuing. Coach 'freeze' to check ball proximity. Great for big numbers."},
+    {name:'Knock Out (Big Grid)',minPlayers:12,type:'dribbling',desc:"20x20 grid for larger numbers. Every player has ball. Knock others out while protecting yours. Bigger grid keeps it fair."},
+    {name:'Fast Feet Gates',minPlayers:8,type:'speed',desc:"Scatter 10–12 gates across a 20x20 grid. All work simultaneously — through as many gates as possible in 30 sec."},
+    {name:'Mirror Dribbling',minPlayers:4,type:'dribbling',desc:"Pairs. Leader dribbles in 5x5 zone, partner mirrors without ball. Run 8–12 pairs simultaneously — needs marked zones side by side."},
+    {name:'Gate Passing (Big Grid)',minPlayers:8,type:'passing',desc:"Set 10–12 gates in 20x20 grid. All pairs work simultaneously. With 16–24, use 8–12 pairs at once."},
+    {name:'Passing Relay (Multi-Team)',minPlayers:12,type:'passing',desc:"4 teams in relay format. All 4 relays run simultaneously. With 16–24 players, run 4 teams of 4–6."},
+    {name:'Triangle Passing (Multiple)',minPlayers:9,type:'passing',desc:"Set up 3–4 separate triangles running simultaneously. 3 players per triangle, 8m per side. With 16–24, run 5–8 triangles."},
+    {name:'Partner Passing On-the-Move',minPlayers:8,type:'passing',desc:"All pairs spread across pitch, passing and moving continuously. No stopping, no queuing. Coach sets challenges."},
+    {name:'Passing Rondo (3 groups)',minPlayers:14,type:'passing',desc:"Run 3 simultaneous 5v1 or 4v1 rondos. Rotate defender every 60 sec. Needs 3 separate 8x8m boxes marked out."},
+    {name:'Laces Strike (2 goals)',minPlayers:8,type:'shooting',desc:"Two goals, two queues. Ball on cone tee, strike with laces. Alternate queues — no waiting more than 30 sec."},
+    {name:'Shoot on the Move (2 goals)',minPlayers:10,type:'shooting',desc:"Two goals, two queues. Dribble 5m then shoot. Keeps it moving. With 20+ use 3 queues into 2 goals."},
+    {name:'Shooting Circuit',minPlayers:14,type:'shooting',desc:"3 shooting stations around one goal: left, centre, right. Players rotate through. GK in goal. 3 shots per player per rotation."},
+    {name:'Jockeying Lane (Multi)',minPlayers:8,type:'defending',desc:"Set up 4–6 parallel jockeying lanes. All pairs work simultaneously. With 16–24 players, 8–12 lanes running at once."},
+    {name:'1v1 Defending Carousel',minPlayers:12,type:'defending',desc:"6 simultaneous 1v1 channels. Winners rotate on. With 16–24, use 8 channels across the pitch."},
+    {name:'2v2 Press Drill (Multi)',minPlayers:12,type:'defending',desc:"Run 3 simultaneous 2v2 pressing boxes. 2 keep possession vs 2 who press, 5-sec limit. With 16–24: 4–6 boxes simultaneously."},
+    {name:'Ghost Runs (Multiple)',minPlayers:9,type:'movement',desc:"Run 3 simultaneous 2v1 drills in separate channels. Rotate roles every 3 turns. Scales to 24 with 8 channels."},
+    {name:'Support Runs (Groups of 3)',minPlayers:9,type:'teamwork',desc:"Groups of 3. A dribbles, B moves to offer pass, C shadows. Rotate roles. With 16–24: 5–8 groups simultaneously."},
+    {name:'Check & Receive (Multi-Queue)',minPlayers:8,type:'movement',desc:"Two queues, two coaches/servers. Both queues running simultaneously doubles throughput for large groups."},
+    {name:'Wide Delivery (2 sides)',minPlayers:10,type:'crossing',desc:"Set up on both sides of goal simultaneously. Left and right wide queues deliver to centre. Two queues, one GK."},
+    {name:'Arrive to Finish (2 sides)',minPlayers:12,type:'crossing',desc:"Ball played wide from both sides alternately. 2 attackers time runs. With 16–24: two wide and two central queues cycling."},
+    {name:'Counter-Attack Trigger',minPlayers:8,type:'transition',desc:"GK catches and distributes to forward. With large groups: 2 simultaneous channels either side of goal, alternating."},
+    {name:'Corner Delivery (Multi)',minPlayers:10,type:'set piece',desc:"Corners from both sides alternately. 3 attackers time runs — near post, far post, penalty spot. Two queues keep it moving."},
+    {name:'Wall Pass Drill (Multi)',minPlayers:9,type:'combination',desc:"3 simultaneous wall-pass channels. Player passes to wall, runs behind cone, receives back. With 16–24: 4–6 channels at once."},
+  ],
+  smallSided:[
+    {name:'Two Games Simultaneously (4v4)',minPlayers:14,desc:"Split into two simultaneous 4v4 games on parallel half-pitches. Maximises touches — nobody watching. Ideal for 14–20 players.",format:'4v4 × 2'},
+    {name:'Two Games Simultaneously (5v5)',minPlayers:18,desc:"Two simultaneous 5v5 games side by side. With 20–24 players this keeps everyone playing. Rotate a sub every 3 min per pitch.",format:'5v5 × 2'},
+    {name:'World Cup (Round Robin)',minPlayers:14,desc:"4 teams of 3–4. Two games simultaneously on half-pitches. Losers swap pitches, winners stay. First to 5 wins all. High energy.",format:'4-team'},
+    {name:'Attack vs Defence (Waves)',minPlayers:14,desc:"Divide into attackers and defenders. 3 attackers vs 2 defenders in waves — rotate out immediately. Coaches manage wave rotation.",format:'Waves'},
+    {name:'Possession Game (4v4 + 2 neutrals)',minPlayers:14,desc:"4v4 with 2 neutral players always playing for team in possession — makes it 6v4. Rotate neutrals every 3 min.",format:'4v4+2N'},
+    {name:'Tournament (3v3, 4 teams)',minPlayers:16,desc:"4 teams of 4. Two simultaneous 3v3 games (one sub per team). 4-min games, rotate. League table on a whiteboard.",format:'3v3 × 2'},
+    {name:'Conditioned 5v5 (2-touch)',minPlayers:14,desc:"5v5 with subs rotating every 3 min. Max 2 touches per player. More than 2 = possession given away. Works well with 14–20.",format:'5v5'},
+    {name:'Skill Bonus Game (parallel)',minPlayers:14,desc:"Two simultaneous 4v4 games. Goals after a skill move count double. Maximises involvement for 14–20.",format:'4v4 × 2'},
+    {name:'Transition Blitz (6v6)',minPlayers:16,desc:"6v6 on a big pitch. When a team scores, they become the defenders. Goal in 5 sec of winning possession = golden goal.",format:'6v6'},
+    {name:'Combination Goal (parallel)',minPlayers:14,desc:"Two simultaneous games. Goals only count after a 1-2 combination. Run parallel to maximise touches for 14–20.",format:'4v4 × 2'},
+    {name:'Clean Sheet Tournament',minPlayers:16,desc:"4 teams. Two simultaneous games. Point for scoring, point for keeping clean 3-min half. League table.",format:'4-team'},
+    {name:'5v5 + GKs (rotating subs)',minPlayers:14,desc:"5v5 with GKs plus subs rotating every 3 minutes. With 14–16 players you have 2–4 subs per team — manageable with rotation order agreed upfront.",format:'5v5'},
+    {name:'Players vs Coaches',minPlayers:14,desc:"All players vs all available coaches. Coaches use weak foot only. Players win by default if they score 5. Scales to any number.",format:'Any'},
+  ]
+};
+
+// ─── WEEK DATA ───────────────────────────────────────────────────────
+const BASE_WEEKS = [
+  {week:1,rotation:1,theme:"First Touch & Ball Familiarity",colour:"#2563eb",
+    warmup:{name:"Ball Tag",duration:"8 min",desc:"Every player has a ball. Coach calls out body parts — players touch ball with that part. Ends with 2 min free dribbling. Use a large 25x25 grid for 14–24 players."},
+    stations:[
+      {name:"Sole Rolls",duration:"8 min",desc:"Run 8–12 pairs simultaneously across a wide area. 3m apart. Roll ball with sole, stop with sole when it arrives. Progress: add a cone gate to roll through."},
+      {name:"The Sticky Dribble",duration:"8 min",desc:"Use a 20x20 grid for large numbers. Dribble keeping ball close — no big kicks. Coach calls 'freeze' to check proximity."},
+      {name:"Juggling Challenges",duration:"8 min",desc:"Personal challenge: beat your own juggling record. Foot, thigh, anywhere. Every player works simultaneously — no queuing."}],
+    smallSided:{format:"Two Games Simultaneously (4v4)",duration:"15 min",rules:"Split into two parallel 4v4 games. Normal rules. Coach focus: praise any deliberate first touch out loud."}},
+  {week:2,rotation:1,theme:"Dribbling with Confidence",colour:"#7c3aed",
+    warmup:{name:"Traffic Lights",duration:"8 min",desc:"Dribble in a large grid. Red=stop (sole on ball), Yellow=slow, Green=fast. Add Orange=turn around. Scale the grid to your numbers."},
+    stations:[
+      {name:"Cone Slalom (Multi-Lane)",duration:"8 min",desc:"Set up 5–6 parallel slalom lanes of 5 cones. Players work in lanes, cycling through. With 16–24 players, 5 lanes of 4–5 keeps everyone active."},
+      {name:"Knock Out (Big Grid)",duration:"8 min",desc:"Use a 20x20 grid. Every player has a ball. Knock others out while protecting yours. Knocked out: 5 toe taps and rejoin."},
+      {name:"Mirror Dribbling",duration:"8 min",desc:"Pairs. Leader dribbles in 5x5 zone, partner mirrors without ball. Run 8–12 pairs simultaneously. Mark zones with flat cones."}],
+    smallSided:{format:"Skill Bonus Game (parallel)",duration:"15 min",rules:"Two simultaneous 4v4 games. Goals after beating a defender with a skill count double. Encourage trying even if it fails."}},
+  {week:3,rotation:1,theme:"Passing — Inside of the Foot",colour:"#059669",
+    warmup:{name:"Partner Passing On-the-Move",duration:"8 min",desc:"All players in pairs spread across pitch. Pass and move together — no stopping. Coach sets direction changes. Ankle locked, toe up."},
+    stations:[
+      {name:"Gate Passing (Big Grid)",duration:"8 min",desc:"Set 10–12 gates in a 20x20 grid. All pairs work simultaneously. With 16–24 players, use 8–12 pairs at once — through as many gates as possible in 2 min."},
+      {name:"Wall Pass Drill (Multi)",duration:"8 min",desc:"3–4 simultaneous wall-pass channels. Player passes to coach/post, receives back, takes touch, passes again. Side-on body shape."},
+      {name:"Passing Relay (Multi-Team)",duration:"8 min",desc:"4 teams. Two lines per team, 8m apart. All 4 relays run simultaneously. With 16–24 players, run 4 teams of 4–6. No misses in a row."}],
+    smallSided:{format:"Possession Game (4v4 + 2 neutrals)",duration:"15 min",rules:"4v4 with 2 neutral players always on the team in possession. Rewards passing. Most completed passes wins."}},
+  {week:4,rotation:1,theme:"Shooting & Striking the Ball",colour:"#dc2626",
+    warmup:{name:"Shooting Gallery Queue",duration:"8 min",desc:"Two goals side by side, players in two queues. Each takes a shot, joins back. No pressure, just reps. Coach counts touches."},
+    stations:[
+      {name:"Laces Strike (2 goals)",duration:"8 min",desc:"Two goals, two queues. Ball on cone tee. Strike with laces: plant foot beside ball, toe down, drive through. Technique over power. Alternate queues — max 30 sec wait."},
+      {name:"Shoot on the Move (2 goals)",duration:"8 min",desc:"Two goals, two queues. Dribble 5m then shoot. Take a touch to set up, then shoot. With 20+ use 3 queues into 2 goals."},
+      {name:"Shooting Circuit",duration:"8 min",desc:"3 shooting stations around one goal: left side, centre, right side. Players rotate through. GK rotates too. 3 shots per player per station."}],
+    smallSided:{format:"Two Games Simultaneously (4v4)",duration:"15 min",rules:"Goals only count from outside the shooting zone (marked cone line). Encourages shooting over bundling in."}},
+  {week:5,rotation:1,theme:"Turning & Changing Direction",colour:"#d97706",
+    warmup:{name:"Compass Dribbling",duration:"8 min",desc:"Coach calls North/South/East/West — players dribble to that end of a large grid. Add a turn at each boundary."},
+    stations:[
+      {name:"Cone Slalom (Multi-Lane)",duration:"8 min",desc:"Each lane focuses on a different turn: lane 1 = sole drag, lane 2 = inside hook, lane 3 = Cruyff. Players rotate between lanes."},
+      {name:"The Sticky Dribble",duration:"8 min",desc:"Large 20x20 grid, all players simultaneously. Coach calls 'turn!' — everyone executes a turn of their choice before continuing."},
+      {name:"Mirror Dribbling",duration:"8 min",desc:"Pairs. Leader focuses on making sharp direction changes. Follower must react and mirror. Builds both turning and reading skills."}],
+    smallSided:{format:"Two Games Simultaneously (4v4)",duration:"15 min",rules:"Tight half-pitch each game to force more turns. Coach shouts 'Nice turn!' to reinforce."}},
+  {week:6,rotation:1,theme:"1v1 Defending",colour:"#0891b2",
+    warmup:{name:"Shadow Running",duration:"8 min",desc:"Pairs across a large grid — one leads, one follows at arm's length mirroring every movement. No ball. Builds defensive footwork."},
+    stations:[
+      {name:"Jockeying Lane (Multi)",duration:"8 min",desc:"Set up 8 parallel jockeying lanes. Attacker dribbles 3m-wide lane. Defender jockeys — stays in front, no tackle. Switch every 30 sec."},
+      {name:"1v1 Defending Carousel",duration:"8 min",desc:"8 simultaneous 1v1 channels across the pitch. Winners rotate on, others take a short break. With 16–24 players use all available space."},
+      {name:"2v2 Press Drill (Multi)",duration:"8 min",desc:"4–6 simultaneous 2v2 pressing boxes. 2 keep possession vs 2 who press. Win within 5 sec or reset."}],
+    smallSided:{format:"World Cup (Round Robin)",duration:"15 min",rules:"4 teams, two simultaneous games. Lots of natural 1v1 defending situations. Praise for staying on feet and not diving in."}},
+  {week:7,rotation:1,theme:"Teamwork & Support Play",colour:"#7c3aed",
+    warmup:{name:"Circle Keep-Away (Multi)",duration:"8 min",desc:"Run 3–4 simultaneous circles of 5v1. Outside players pass; middle tries to win it. Rotate middle player every 60 sec."},
+    stations:[
+      {name:"Triangle Passing (Multiple)",duration:"8 min",desc:"Run 5–8 simultaneous triangles. 3 players, 8m per side. Pass around, change direction on coach's whistle. Progress: add a middle defender."},
+      {name:"Support Runs (Groups of 3)",duration:"8 min",desc:"Groups of 3. A dribbles, B always moves to offer a pass option, C shadows. Rotate roles every 2 min. With 24 players: 8 simultaneous groups."},
+      {name:"Ghost Runs (Multiple)",duration:"8 min",desc:"8 simultaneous 2v1 channels. Player with ball, one runner, one defender. Find the runner. Rotate roles every 3 turns."}],
+    smallSided:{format:"Tournament (3v3, 4 teams)",duration:"15 min",rules:"4 teams, two simultaneous 3v3 games. 4-min games, rotate. League table. Players choose which of 2 goals to attack."}},
+  {week:8,rotation:1,theme:"Receiving & Controlling the Ball",colour:"#059669",
+    warmup:{name:"Partner Passing On-the-Move",duration:"8 min",desc:"All players in pairs spread across pitch. One tosses underarm, partner controls with foot/thigh and passes back. Progress to struck passes."},
+    stations:[
+      {name:"Sole Rolls",duration:"8 min",desc:"Pairs 3m apart. Coach rolls balls at different speeds and angles. Player receives with inside of foot into space. Soft touch — don't let it bounce away."},
+      {name:"Check & Receive (Multi-Queue)",duration:"8 min",desc:"Two queues, two coaches. Player checks back from cone to receive. Both queues running simultaneously. Focus: one-touch turn, head up."},
+      {name:"Ghost Runs (Multiple)",duration:"8 min",desc:"8 channels. Player receives with back to goal, has 2 sec to control and turn before light defensive pressure arrives. Protect first, then turn."}],
+    smallSided:{format:"Two Games Simultaneously (4v4)",duration:"15 min",rules:"Every time a player controls a difficult ball cleanly, coach stops briefly to highlight it across both pitches."}},
+  {week:9,rotation:1,theme:"Goalkeeper Basics",colour:"#b45309",
+    warmup:{name:"Shooting Gallery Queue",duration:"8 min",desc:"Two goals side by side. All players fall safely sideways and roll on grass first. Then: two queues, GK in each goal. Players shoot, GK saves. Rotate GKs every 2 min."},
+    stations:[
+      {name:"Laces Strike (2 goals)",duration:"8 min",desc:"Teach GK ready stance at both goals simultaneously: feet shoulder-width, knees bent, hands at hip height. Alternate shots rolled at each side. All players rotate as GK."},
+      {name:"Shooting Circuit",duration:"8 min",desc:"3 stations around one goal. GK in goal. Shots rolled firmly from each side — GK steps across and smothers. 3–4 turns each in goal."},
+      {name:"Counter-Attack Trigger",duration:"8 min",desc:"GK catches ball and rolls or throws to a teammate. Introduce underarm bowl for accuracy. Run from both sides of goal alternately. All players rotate into goal."}],
+    smallSided:{format:"Two Games Simultaneously (4v4)",duration:"15 min",rules:"Rotate GKs every 3 minutes across both pitches so all experience the position."}},
+  {week:10,rotation:1,theme:"Movement Without the Ball",colour:"#2563eb",
+    warmup:{name:"Chase the Tail",duration:"8 min",desc:"Large grid. Bibs as tails. Grab others' while protecting yours. With 14–24 players spread across a big space — fast and chaotic."},
+    stations:[
+      {name:"Fast Feet Gates",duration:"8 min",desc:"10–12 gates across a 20x20 grid. All players work simultaneously — through as many gates as possible in 30 sec. 1 point per gate."},
+      {name:"Ghost Runs (Multiple)",duration:"8 min",desc:"8 simultaneous 2v1 channels. Player with ball, player making a run, 1 defender. Passing player must find the runner and time the movement."},
+      {name:"Check & Receive (Multi-Queue)",duration:"8 min",desc:"Two queues, two coaches. Player at cone, decoy run away, checks back sharply to receive. Simulates losing a marker. Both queues simultaneous."}],
+    smallSided:{format:"Attack vs Defence (Waves)",duration:"15 min",rules:"3 attackers vs 2 defenders in waves. 1 pt for goal, 1 pt for a pre-planned run that leads to a chance. Coach awards."}},
+  {week:11,rotation:1,theme:"Crossing & Finishing",colour:"#dc2626",
+    warmup:{name:"Box-to-Box Sprint",duration:"8 min",desc:"Two queues, one each side. Sprint across penalty area width and receive a rolled ball at far end. One touch back, join opposite queue. Fast-moving."},
+    stations:[
+      {name:"Wide Delivery (2 sides)",duration:"8 min",desc:"Set up on both sides simultaneously. Player dribbles to byline, crosses to teammate at penalty spot. Left and right queues alternating. Look up before delivering."},
+      {name:"Arrive to Finish (2 sides)",duration:"8 min",desc:"Ball played wide from both sides alternately. 2 attackers time runs — one near post, one far post. Crosser picks one. Finish first time if possible."},
+      {name:"Shooting Circuit",duration:"8 min",desc:"Coach throws/crosses from wide, player arrives to finish — volley or half-volley from 6–8m. Rotate through left, centre, right arrival positions."}],
+    smallSided:{format:"Two Games Simultaneously (4v4)",duration:"15 min",rules:"Wide pitches. Goals from crosses or headers/volleys count double. Encourages wide play."}},
+  {week:12,rotation:1,theme:"Decision Making — Dribble or Pass?",colour:"#7c3aed",
+    warmup:{name:"Numbers Dribbling",duration:"8 min",desc:"Every player gets a number. Coach calls two numbers — those players pass to each other while others keep dribbling. Forces decision-making under movement."},
+    stations:[
+      {name:"Gate Passing (Big Grid)",duration:"8 min",desc:"10–12 gates in 20x20 grid, all pairs working simultaneously. Coach freezes at random and asks the player on the ball: 'Pass or go — why?'"},
+      {name:"The Sticky Dribble",duration:"8 min",desc:"20x20 grid. All players dribble. Coach calls 'find a pass!' — players must find and pass to someone not being marked. Then continue dribbling."},
+      {name:"Ghost Runs (Multiple)",duration:"8 min",desc:"3v1 across 8 channels. Team of 3 must decide: keep possession or go forward? 1 defender forces the decision."}],
+    smallSided:{format:"Combination Goal (parallel)",duration:"15 min",rules:"Two simultaneous 4v4 games. Goals only count after a 1-2 combination in build-up. Coach gives point for smart decisions called in real time."}},
+  {week:13,rotation:1,theme:"Heading Introduction (Safe & Age-Appropriate)",colour:"#059669",
+    warmup:{name:"Partner Passing On-the-Move",duration:"8 min",desc:"All players in pairs. One gently tosses underarm, partner heads back into hands using balloons or foam balls first. No pressure — just getting comfortable."},
+    stations:[
+      {name:"Juggling Challenges",duration:"8 min",desc:"All players simultaneously: hold ball at forehead, push forward. Then gentle self-toss and nod. Eyes open, chin to chest, use neck muscles. Own pace."},
+      {name:"Check & Receive (Multi-Queue)",duration:"8 min",desc:"Two queues, two coaches. Coach throws gently to head height, player heads back into coaches' hands. No goalward heading yet. Just the contact."},
+      {name:"Wide Delivery (2 sides)",duration:"8 min",desc:"Ball thrown from side, player heads it away — not forward, just clearance direction. Head out wide rather than straight up. Both sides simultaneously."}],
+    smallSided:{format:"Two Games Simultaneously (4v4)",duration:"15 min",rules:"Normal game. No heading rule in match — just observe what they do naturally after the session."}},
+  {week:14,rotation:1,theme:"Communication & Calling for the Ball",colour:"#0891b2",
+    warmup:{name:"Loud Passing Circle",duration:"8 min",desc:"Groups of 6–8 in separate circles. Must call teammate's name before passing. Run 2–4 circles simultaneously. No name = no pass."},
+    stations:[
+      {name:"Partner Passing On-the-Move",duration:"8 min",desc:"All pairs in motion. Can only receive if you've called for it first ('Man on!', 'Square!', 'Turn!'). Builds communication habits."},
+      {name:"Shooting Circuit",duration:"8 min",desc:"GK calls 'keeper!' for any ball in box. Rotate GKs. Outfield players throw in balls from different positions — GK must call loudly and claim."},
+      {name:"Ghost Runs (Multiple)",duration:"8 min",desc:"8 channels. Player on ball, teammate shouts 'man on!' or 'turn!' based on coach's silent signal from outside. Player reacts to what they hear."}],
+    smallSided:{format:"World Cup (Round Robin)",duration:"15 min",rules:"Award team point every time a player communicates something clearly useful. Coach listens across both pitches and calls it out."}},
+  {week:15,rotation:1,theme:"Set Pieces — Corners & Free Kicks",colour:"#b45309",
+    warmup:{name:"Shooting Gallery Queue",duration:"8 min",desc:"Each player gets 3 free kicks from different positions outside box. Two queues, two goals. GK in each. Just the feel of a set piece."},
+    stations:[
+      {name:"Corner Delivery (Multi)",duration:"8 min",desc:"Corners from both sides simultaneously. Aim for penalty spot. Near post & far post delivery. Two queues of deliveries to keep it moving — no defenders yet."},
+      {name:"Wide Delivery (2 sides)",duration:"8 min",desc:"Walk through corner attack runs from both sides: two attackers time runs — far post and penalty spot. Then live timing. Both sides simultaneously."},
+      {name:"Shooting Circuit",duration:"8 min",desc:"Set up 2-player walls at 2 stations. Players chip or curl over/around wall. Rotate through stations. Everyone gets 3–4 attempts."}],
+    smallSided:{format:"Tournament (3v3, 4 teams)",duration:"15 min",rules:"When fouls or ball out occur naturally, set restart up properly as a learning moment. Praise correct positioning across all games."}},
+  {week:16,rotation:1,theme:"Festival Week — Play, Review & Celebrate",colour:"#dc2626",
+    warmup:{name:"Numbers Dribbling",duration:"8 min",desc:"Players vote on their favourite warm-up from past 15 weeks — then run it themselves with minimal coach input as a squad."},
+    stations:[
+      {name:"Juggling Challenges",duration:"8 min",desc:"Each player picks one skill from the programme to show the group. Celebrate confidence, not perfection. Everyone gets a moment."},
+      {name:"Fast Feet Gates",duration:"8 min",desc:"Group votes on their favourite drill. Run it again — but this time players lead it. Coach steps back. Gauge what resonated most."},
+      {name:"Shooting Circuit",duration:"8 min",desc:"Coach(es) vs players in a shooting challenge — coaches use weak foot only. Kids love the reversal. Builds connection and fun to close the rotation."}],
+    smallSided:{format:"Players vs Coaches",duration:"15 min",rules:"All players vs coaches. Coaches weak foot only. Players win by default at 5 goals. Celebrate effort and improvement. End with team huddle."}},
+
+  // ROTATION 2
+  {week:1,rotation:2,theme:"Ball Mastery — More Tricks, More Confidence",colour:"#2563eb",
+    warmup:{name:"Freestyle Circle",duration:"8 min",desc:"Two circles of 8–10. Players take turns in centre showing any skill. No wrong answers. Others cheer. Sets positive, experimental tone."},
+    stations:[
+      {name:"Stepover Intro",duration:"8 min",desc:"Every player works simultaneously with their own ball. Teach stepover: stand still, circle foot over ball, push the other way. Still → slow → speed past a cone."},
+      {name:"Roll & Drag",duration:"8 min",desc:"All players simultaneously. Sole roll forward then drag back with same foot. Rhythm: roll, drag, roll, drag. Add a turn at the end."},
+      {name:"Cone Slalom (Multi-Lane)",duration:"8 min",desc:"5–6 lanes. Lane 1: stepover. Lane 2: sole roll. Lane 3: inside hook. Players rotate through all three. Finish with a shot at the end of the final lane."}],
+    smallSided:{format:"Skill Bonus Game (parallel)",duration:"15 min",rules:"Two simultaneous 4v4 games. Goals after beating a defender with a skill move count double. Encourage trying even if it fails."}},
+  {week:2,rotation:2,theme:"Passing Combinations — Wall Passes & Give-and-Go",colour:"#7c3aed",
+    warmup:{name:"Partner Passing On-the-Move",duration:"8 min",desc:"All pairs spread across pitch, passing and moving continuously. Must make a one-two combination before changing direction. Forces communication."},
+    stations:[
+      {name:"Wall Pass Drill (Multi)",duration:"8 min",desc:"4–6 simultaneous wall-pass channels. Player passes to post/coach, immediately runs behind cone-defender, receives back. Classic 1-2. All channels running at once."},
+      {name:"Passing Rondo (3 groups)",duration:"8 min",desc:"3 simultaneous 5v1 rondos. Outside players pass; middle tries to intercept. Middle players swap between circles every 30 sec."},
+      {name:"Ghost Runs (Multiple)",duration:"8 min",desc:"8 simultaneous overlap channels. A passes to B, then overlaps to receive again from B going forward. Walk through first, then at pace."}],
+    smallSided:{format:"Combination Goal (parallel)",duration:"15 min",rules:"Two simultaneous 4v4 games. Goals only count if they follow a 1-2 combination. Encourage shouting 'one-two!' when it happens."}},
+  {week:3,rotation:2,theme:"Speed of Play — Quick Touches",colour:"#059669",
+    warmup:{name:"Hot Floor Dribbling",duration:"8 min",desc:"Large grid, all dribble simultaneously. Dribble as if floor is hot — fast feet, lots of touches. Coach counts touches in 30 sec."},
+    stations:[
+      {name:"Partner Passing On-the-Move",duration:"8 min",desc:"All pairs in motion. Only 2 touches allowed: control and pass. Move further apart gradually. Habit of moving the ball on quickly."},
+      {name:"Fast Feet Gates",duration:"8 min",desc:"10–12 gates across 20x20 grid. All players simultaneously — through as many gates as possible in 30 sec. 1 point per gate."},
+      {name:"Passing Rondo (3 groups)",duration:"8 min",desc:"3 simultaneous rondos in 4x4m boxes. Space does the work — lightning decisions forced. Rotate defender every 60 sec."}],
+    smallSided:{format:"Conditioned 5v5 (2-touch)",duration:"15 min",rules:"5v5 with subs rotating every 3 min. Max 2 touches. More than 2 = possession to other team. Urgency above all."}},
+  {week:4,rotation:2,theme:"Shooting Power & Placement",colour:"#dc2626",
+    warmup:{name:"Shooting Gallery Queue",duration:"8 min",desc:"Two goals, two queues. Cycle through shooting. GK in each goal. Reps, no instruction yet. Build up the feel."},
+    stations:[
+      {name:"Laces Strike (2 goals)",duration:"8 min",desc:"Two goals, two queues. Alternate: low near-post, then far-post. GK in goal. Placement over power. Count how many hit target."},
+      {name:"Shooting Circuit",duration:"8 min",desc:"3 stations around one goal. Coach rolls at angle from each position, player shoots first time. Set body shape before ball arrives. Both feet."},
+      {name:"1v1 Defending Carousel",duration:"8 min",desc:"8 simultaneous 1v1 channels. Attacker gets ball 12m from goal, 3 seconds to shoot before defender closes. Simulates real-game urgency."}],
+    smallSided:{format:"Two Games Simultaneously (4v4)",duration:"15 min",rules:"3 pts for shot on target (even saved). 5 pts for goal. Rewards brave shooting."}},
+  {week:5,rotation:2,theme:"Width & Stretching the Play",colour:"#d97706",
+    warmup:{name:"Numbers Dribbling",duration:"8 min",desc:"Every player gets a number. Coach calls a number — that player dribbles into a wide channel on either side. Others keep dribbling centrally. Instinct to go wide."},
+    stations:[
+      {name:"Wide Delivery (2 sides)",duration:"8 min",desc:"Both sides simultaneously. Wide player dribbles to byline, squares to 2 central players. No defenders. Focus on quality delivery and timing of runs."},
+      {name:"Partner Passing On-the-Move",duration:"8 min",desc:"All pairs across the full pitch width. Every 3rd pass must be a switch of play — across to the other side. Forces using the full width."},
+      {name:"Ghost Runs (Multiple)",duration:"8 min",desc:"3 attackers (2 wide, 1 central) vs 2 defenders across 8 simultaneous channels. Attackers aim to get ball wide and cross or combine."}],
+    smallSided:{format:"World Cup (Round Robin)",duration:"15 min",rules:"Wide pitches for all 4 teams. Goals from wide positions (byline cross or cut-back) count double. Encourages width."}},
+  {week:6,rotation:2,theme:"Pressing & Winning the Ball Back",colour:"#0891b2",
+    warmup:{name:"Team Chase the Tail",duration:"8 min",desc:"3 teams with different bib colours. Teams try to collect only their colour tails. Sprinting, closing down, direction changes all in one."},
+    stations:[
+      {name:"Jockeying Lane (Multi)",duration:"8 min",desc:"8 parallel lanes. Ball player stands still. Presser must approach at an angle to block the best pass. Coach shows correct approach angle."},
+      {name:"2v2 Press Drill (Multi)",duration:"8 min",desc:"4–6 simultaneous 2v2 pressing boxes. 2 keep possession vs 2 who press. Must win within 5 sec or it resets. Urgency and teamwork in pressing."},
+      {name:"Ghost Runs (Multiple)",duration:"8 min",desc:"Identify the trigger: back pass, heavy touch, GK with ball. When trigger happens, 2 designated pressers sprint. Others hold shape. Practice the trigger read."}],
+    smallSided:{format:"Two Games Simultaneously (4v4)",duration:"15 min",rules:"Win ball back within 3 seconds of losing it and score = double goal. Rewards immediate pressing."}},
+  {week:7,rotation:2,theme:"Positioning — Shape & Spacing",colour:"#7c3aed",
+    warmup:{name:"Shadow Running",duration:"8 min",desc:"Half the group are attackers, half defenders. No ball. Attackers move slowly — defenders must maintain shape and not bunch together. Coach coaches spacing."},
+    stations:[
+      {name:"Fast Feet Gates",duration:"8 min",desc:"10–12 gates in 20x20 grid. All players must be spread out so no two are in the same gate zone. Teaches spatial awareness while moving."},
+      {name:"Partner Passing On-the-Move",duration:"8 min",desc:"Walk through a basic 2-1-1 shape. Show positions in possession and out of possession. Then pass around in shape — move to show the role."},
+      {name:"Ghost Runs (Multiple)",duration:"8 min",desc:"3v3 across multiple channels. Coach freezes play and points to one great position and one to improve. No negativity — just learning."}],
+    smallSided:{format:"Tournament (3v3, 4 teams)",duration:"15 min",rules:"Loose guidance: 'one player stays back', 'spread wide when we have the ball'. Let them work it out with gentle prompts."}},
+  {week:8,rotation:2,theme:"Receiving Under Pressure",colour:"#059669",
+    warmup:{name:"Numbers Dribbling",duration:"8 min",desc:"3 players with bibs are defenders. All others dribble. When a defender approaches, dribbler must quickly pass to a teammate and run to new space."},
+    stations:[
+      {name:"Check & Receive (Multi-Queue)",duration:"8 min",desc:"Two queues, two coaches. Ball played in with defender behind. Player must shield, turn, and escape. Can they feel the defender without looking?"},
+      {name:"Ghost Runs (Multiple)",duration:"8 min",desc:"8 channels. Player receives with back to goal, 2 sec to turn before light pressure arrives. 'Protect first, then turn.' Both feet."},
+      {name:"Sole Rolls",duration:"8 min",desc:"Balls played at different heights (rolled, lobbed, driven) across 8–12 pairs. Always cushion the impact — don't let it bounce away."}],
+    smallSided:{format:"Two Games Simultaneously (4v4)",duration:"15 min",rules:"Normal game. Coach rewards any clean receipt of a difficult ball with a verbal callout across both pitches."}},
+  {week:9,rotation:2,theme:"The Attacking Third",colour:"#b45309",
+    warmup:{name:"Shooting Gallery Queue",duration:"8 min",desc:"Two goals, two queues. 3-player attack waves vs 1 then 2 defenders from halfway line. Rotates continuously. Fast and fun — just get forward."},
+    stations:[
+      {name:"Ghost Runs (Multiple)",duration:"8 min",desc:"8 channels. A passes to B. C makes a run beyond both. B plays to C. Walk through slowly then at pace. Classic 'third-man concept'."},
+      {name:"Cone Slalom (Multi-Lane)",duration:"8 min",desc:"6 lanes. Wide player at start receives, cuts inside past passive defender using the lane, shoots at end. Both feet. Both directions."},
+      {name:"Shooting Circuit",duration:"8 min",desc:"2v1 in attacking third across 3 stations around goal. Attackers combine to create a clear shot. 1 min per rotation — count goals."}],
+    smallSided:{format:"Attack vs Defence (Waves)",duration:"15 min",rules:"Goals from combinations of 2+ passes in the attacking third count double."}},
+  {week:10,rotation:2,theme:"The Defending Third",colour:"#2563eb",
+    warmup:{name:"Shooting Gallery Queue",duration:"8 min",desc:"4+ defenders face two goals. Coach fires shots from distance. Defenders block with bodies, feet, anything. Comfort in defending collectively."},
+    stations:[
+      {name:"Jockeying Lane (Multi)",duration:"8 min",desc:"8 lanes. One presses, second drops behind. Walk through the concept in each lane: pressure + cover in pairs simultaneously."},
+      {name:"Shooting Circuit",duration:"8 min",desc:"Ball into box from both sides alternately. Defenders must clear immediately — no time on ball. 'When in doubt, put it out.' Rotate defenders."},
+      {name:"2v2 Press Drill (Multi)",duration:"8 min",desc:"4–6 simultaneous 2v2 boxes with GK. 2 attackers vs 2 defenders. One pressures, one covers. Swap every 3 rounds."}],
+    smallSided:{format:"Tournament (3v3, 4 teams)",duration:"15 min",rules:"Point for keeping a clean 3-min half as well as for scoring. Rewards defensive effort."}},
+  {week:11,rotation:2,theme:"Transitions — Defence to Attack",colour:"#dc2626",
+    warmup:{name:"Team Chase the Tail",duration:"8 min",desc:"2 teams in a large grid. When a team wins the opposing team's tails, they immediately sprint to defend a line at the opposite end. Fast tempo."},
+    stations:[
+      {name:"Counter-Attack Trigger",duration:"8 min",desc:"Both sides of goal simultaneously. GK catches and distributes quickly to forward. Don't celebrate — go! Double the reps with 2 channels."},
+      {name:"Ghost Runs (Multiple)",duration:"8 min",desc:"When possession changes in each channel, both teams reset positions (attackers drop, defenders push) before play continues. Discipline in transitions."},
+      {name:"Wide Delivery (2 sides)",duration:"8 min",desc:"Defending player wins ball, immediately looks for long pass to forward in space on either wing. No pressure first, then with a chasing opponent."}],
+    smallSided:{format:"Transition Blitz (6v6)",duration:"15 min",rules:"6v6. Goal within 5 sec of winning possession = golden goal (3 points). Rewards immediate counter-attack."}},
+  {week:12,rotation:2,theme:"Creativity & Trying New Things",colour:"#7c3aed",
+    warmup:{name:"Freestyle Circle",duration:"8 min",desc:"Two large circles. Every 30 sec, coach says 'show me something!' — each player in centre attempts any skill or trick. No critique, only encouragement."},
+    stations:[
+      {name:"Cone Slalom (Multi-Lane)",duration:"8 min",desc:"6 lanes. Lane 1: scissors. Lane 2: Marseille turn. Lane 3: Maradona. Players rotate and pick their favourite. Don't worry about perfection."},
+      {name:"The Sticky Dribble",duration:"8 min",desc:"Large grid, street rules — all tricks welcome, bounce off coach 'walls', unlimited touches. Pure fun and expression."},
+      {name:"Shooting Circuit",duration:"8 min",desc:"Each station requires a different trick before shooting. Stepover at station 1, inside hook at station 2, player's own choice at station 3."}],
+    smallSided:{format:"Players vs Coaches",duration:"15 min",rules:"Let players decide any extra rules. Coach observes. Awards a 'creativity point' out loud when anything inventive happens."}},
+  {week:13,rotation:2,theme:"Fitness Through Fun — Agility & Speed",colour:"#059669",
+    warmup:{name:"Relay Races",duration:"8 min",desc:"4 teams of 4–6. Run 4 relay lanes simultaneously. Dribble down, back, tag next. Vary: roll, kick, carry. Fast-paced competitive warm-up."},
+    stations:[
+      {name:"Cone Slalom (Multi-Lane)",duration:"8 min",desc:"6 lanes of agility work: high knees, in-in-out-out, lateral shuffle. Collect ball at the end of each lane and shoot. Links fitness to football."},
+      {name:"Fast Feet Gates",duration:"8 min",desc:"10–12 gates across large grid. 2 players with bibs are taggers without balls. Others dribble and evade. If tagged: 5 quick toe taps before re-entering."},
+      {name:"Ghost Runs (Multiple)",duration:"8 min",desc:"Each team guards 3 cones. On whistle: sprint to knock over opponent's cones and protect your own. Sprinting, weaving, reacting. 8 simultaneous mini-games."}],
+    smallSided:{format:"Transition Blitz (6v6)",duration:"15 min",rules:"Large pitch emphasises fitness and running. Normal rules. Sub rotation every 3 min."}},
+  {week:14,rotation:2,theme:"Reading the Game",colour:"#0891b2",
+    warmup:{name:"Numbers Dribbling",duration:"8 min",desc:"Players dribble. Coach blows whistle — all freeze. Coach points to one player: 'Where would you pass right now?' Builds game-reading habit."},
+    stations:[
+      {name:"Ghost Runs (Multiple)",duration:"8 min",desc:"3v2 across 8 channels. Before passing, player must say out loud 'I see [name] open' or 'I'm going forward.' Forces verbalising."},
+      {name:"Partner Passing On-the-Move",duration:"8 min",desc:"All pairs passing, but ball has a number on it (use a marker). Call out the number every time you look down at the ball. Head-up play."},
+      {name:"Triangle Passing (Multiple)",duration:"8 min",desc:"5–8 simultaneous triangles. After each pass, coach can freeze play and ask the passing player: 'What did you see before you passed?'"}],
+    smallSided:{format:"World Cup (Round Robin)",duration:"15 min",rules:"After each goal, ask the scorer: 'What did you see before you shot?' Normalise thinking about the game."}},
+  {week:15,rotation:2,theme:"Team Identity — Our Way of Playing",colour:"#b45309",
+    warmup:{name:"Team Chase the Tail",duration:"8 min",desc:"Players design their own warm-up as a group. Coach facilitates — kids lead. Takes 2 min to agree, 6 to run it. Builds ownership and confidence."},
+    stations:[
+      {name:"Shooting Circuit",duration:"8 min",desc:"Design and rehearse 2 kick-off plays as a team. They get to name them. Practise until the movement is automatic across the whole squad."},
+      {name:"Corner Delivery (Multi)",duration:"8 min",desc:"Revisit corner delivery from Week 15 Rotation 1. Now add a rehearsed run — squad designs where each player goes. 5 reps each side."},
+      {name:"Partner Passing On-the-Move",duration:"8 min",desc:"Seated circle: 'What are we good at? What do we want to get better at?' Coach listens and facilitates. Builds team culture and identity."}],
+    smallSided:{format:"Transition Blitz (6v6)",duration:"15 min",rules:"Use kick-off plays they designed. Let them run their own team. Coach steps back and watches."}},
+  {week:16,rotation:2,theme:"End of Programme — Celebration & Looking Forward",colour:"#dc2626",
+    warmup:{name:"Numbers Dribbling",duration:"8 min",desc:"Coach calls drills from across the year at random — 45 sec each. Traffic Lights, Compass, Loud Circle, Chase the Tail… Greatest hits."},
+    stations:[
+      {name:"Juggling Challenges",duration:"8 min",desc:"Call players over in small groups for a 30-sec personal shout-out from coach: one thing improved most this year. Genuine and specific."},
+      {name:"Shooting Circuit",duration:"8 min",desc:"Each player picks starting position and tells coach how ball arrives. Tries to score their 'dream goal'. Celebrate every attempt."},
+      {name:"Laces Strike (2 goals)",duration:"8 min",desc:"Classic penalty shoot-out — both goals, everyone takes 3 pens. GKs rotate. Final one of the year — make it dramatic with countdown."}],
+    smallSided:{format:"Players vs Coaches",duration:"15 min",rules:"All players vs coaches. Coaches use weak foot only. Players win by default at 5 goals. Team photo, huddle, and celebration to close the season."}},
+];
+
+// ─── INIT ─────────────────────────────────────────────────────────────
+weekData = BASE_WEEKS.map(w => ({...w, stations: w.stations.map(s=>({...s}))}));
+
+function applyTheme() {
+  const r = ROT[rotation];
+  document.getElementById('header').style.background = r.bg;
+  document.getElementById('header').style.setProperty('--accent', r.accent);
+  document.getElementById('header').style.setProperty('--light', r.light);
+  document.documentElement.style.setProperty('--accent', r.accent);
+  document.documentElement.style.setProperty('--light', r.light);
+}
+
+function setRotation(r) {
+  rotation = r;
+  document.getElementById('rot1').classList.toggle('active', r===1);
+  document.getElementById('rot2').classList.toggle('active', r===2);
+  applyTheme();
+  renderGrid();
+}
+
+function setPlayerCount(v) {
+  playerCount = parseInt(v);
+}
+
+function renderGrid() {
+  const grid = document.getElementById('weekGrid');
+  grid.innerHTML = '';
+  weekData.filter(w => w.rotation === rotation).forEach((w, i) => {
+    const card = document.createElement('div');
+    card.className = 'week-card';
+    card.style.setProperty('--wc', w.colour);
+    card.innerHTML = `
+      <span class="week-badge" style="background:${w.colour}">WEEK ${w.week}</span>
+      <h3>${w.theme}</h3>
+      <div class="week-drills">${w.stations.map(s=>s.name).join(' · ')}</div>`;
+    card.addEventListener('click', () => openModal(w));
+    grid.appendChild(card);
+  });
+}
+
+// ─── MODAL ───────────────────────────────────────────────────────────
+function openModal(w) {
+  openWeekIdx = weekData.indexOf(w);
+  editMode = false;
+  renderModal(w);
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  openWeekIdx = null;
+  editMode = false;
+}
+
+function toggleEdit() {
+  editMode = !editMode;
+  const btn = document.getElementById('editBtn');
+  btn.textContent = editMode ? '✓ Done' : '✏️ Edit';
+  btn.style.background = editMode ? '#fff' : 'rgba(255,255,255,0.2)';
+  btn.style.color = editMode ? weekData[openWeekIdx].colour : '#fff';
+  document.getElementById('modalBody').querySelectorAll('.swap-btn').forEach(b => {
+    b.style.display = editMode ? 'inline-block' : 'none';
+  });
+}
+
+function renderModal(w) {
+  const r = ROT[rotation];
+  document.getElementById('modalHeader').style.background = w.colour;
+  document.getElementById('modal').style.borderColor = w.colour;
+  document.getElementById('modalLabel').textContent = `ROTATION ${w.rotation} · WEEK ${w.week}`;
+  document.getElementById('modalTheme').textContent = w.theme;
+  const editBtn = document.getElementById('editBtn');
+  editBtn.style.color = editMode ? w.colour : '#fff';
+  document.getElementById('modalTags').innerHTML =
+    `<span class="tag">⏱ 60 min</span><span class="tag">👦 U9</span><span class="tag">👥 ${playerCount} today</span>`;
+
+  const body = document.getElementById('modalBody');
+  body.innerHTML = '';
+
+  // Warm-up
+  body.appendChild(sessionBlock('🌡️ WARM-UP', '8 min', '#f59e0b', w.colour, () => {
+    const name = document.createElement('div');
+    name.className = 'drill-name drill-name-warm';
+    name.textContent = w.warmup.name;
+    const desc = document.createElement('p');
+    desc.className = 'drill-desc';
+    desc.textContent = w.warmup.desc;
+    const frag = document.createDocumentFragment();
+    frag.appendChild(name); frag.appendChild(desc);
+    const diagFn = DIAGRAMS[w.warmup.name];
+    if (diagFn) frag.appendChild(diagFn());
+    return frag;
+  }, () => openPicker('warmup', null)));
+
+  // Stations header
+  const sh = document.createElement('div');
+  sh.className = 'station-header-label';
+  sh.style.color = w.colour;
+  sh.textContent = '🔵 STATIONS — rotate every 8 minutes';
+  body.appendChild(sh);
+
+  w.stations.forEach((s, i) => {
+    body.appendChild(sessionBlock(`Station ${i+1}`, '8 min', w.colour, w.colour, () => {
+      const name = document.createElement('div');
+      name.className = 'drill-name';
+      name.textContent = s.name;
+      const desc = document.createElement('p');
+      desc.className = 'drill-desc';
+      desc.textContent = s.desc;
+      const frag = document.createDocumentFragment();
+      frag.appendChild(name); frag.appendChild(desc);
+      const diagFn = DIAGRAMS[s.name];
+      if (diagFn) frag.appendChild(diagFn());
+      return frag;
+    }, () => openPicker('station', i)));
+  });
+
+  // Small-sided
+  body.appendChild(sessionBlock('🏆 SMALL-SIDED GAME', '15 min', '#10b981', w.colour, () => {
+    const fmt = document.createElement('span');
+    fmt.className = 'ssformat';
+    fmt.textContent = w.smallSided.format;
+    const rules = document.createElement('p');
+    rules.className = 'ssrules';
+    rules.innerHTML = `<strong>Focus: </strong>${w.smallSided.rules}`;
+    const frag = document.createDocumentFragment();
+    frag.appendChild(fmt); frag.appendChild(rules);
+    return frag;
+  }, () => openPicker('smallSided', null)));
+
+  // Back button
+  const back = document.createElement('button');
+  back.className = 'back-btn';
+  back.style.background = w.colour;
+  back.textContent = '← Back to Plan';
+  back.addEventListener('click', closeModal);
+  body.appendChild(back);
+}
+
+function sessionBlock(label, duration, labelColor, accentColor, contentFn, swapFn) {
+  const block = document.createElement('div');
+  block.className = 'session-block';
+  block.style.borderLeftColor = labelColor;
+
+  const header = document.createElement('div');
+  header.className = 'session-block-header';
+
+  const lbl = document.createElement('span');
+  lbl.className = 'session-label';
+  lbl.style.color = labelColor;
+  lbl.textContent = label;
+
+  const meta = document.createElement('div');
+  meta.className = 'session-meta';
+
+  const dur = document.createElement('span');
+  dur.className = 'duration-badge';
+  dur.textContent = duration;
+
+  const swap = document.createElement('button');
+  swap.className = 'swap-btn';
+  swap.textContent = '⇄ Swap';
+  swap.style.display = editMode ? 'inline-block' : 'none';
+  swap.addEventListener('click', (e) => { e.stopPropagation(); swapFn(); });
+
+  meta.appendChild(dur); meta.appendChild(swap);
+  header.appendChild(lbl); header.appendChild(meta);
+  block.appendChild(header);
+
+  const content = contentFn();
+  if (content.nodeType) block.appendChild(content);
+  return block;
+}
+
+// ─── PICKER ──────────────────────────────────────────────────────────
+function openPicker(type, stationIdx) {
+  pendingSwap = { type, stationIdx };
+  const w = weekData[openWeekIdx];
+  const labels = { warmup: 'SWAP WARM-UP', station: `SWAP STATION ${stationIdx+1}`, smallSided: 'SWAP SMALL-SIDED GAME' };
+  document.getElementById('pickerTitle').textContent = labels[type];
+  document.getElementById('pickerSub').textContent = `Showing options for ${playerCount} players`;
+
+  const items = filteredDrills(type);
+  const list = document.getElementById('pickerList');
+  list.innerHTML = '';
+
+  if (items.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'picker-empty';
+    empty.textContent = `No drills found for ${playerCount} players. Try adjusting the player count.`;
+    list.appendChild(empty);
+  } else {
+    items.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'picker-item';
+      el.innerHTML = `
+        <div class="picker-item-top">
+          <span class="picker-item-name">${item.name}</span>
+          ${item.minPlayers ? `<span class="picker-min">min ${item.minPlayers}p</span>` : ''}
+          ${item.format ? `<span class="picker-format">${item.format}</span>` : ''}
+        </div>
+        <p class="picker-desc">${item.desc}</p>`;
+      const diagFn = DIAGRAMS[item.name];
+      if (diagFn) {
+        const dw = document.createElement('div');
+        dw.className = 'picker-diag';
+        const d = diagFn();
+        if (d.querySelector) { const svg = d.querySelector('svg'); if(svg) dw.appendChild(svg.cloneNode(true)); }
+        el.appendChild(dw);
+      }
+      el.addEventListener('mouseenter', () => el.style.borderColor = ROT[rotation].accent);
+      el.addEventListener('mouseleave', () => el.style.borderColor = 'transparent');
+      el.addEventListener('click', () => applySwap(item));
+      list.appendChild(el);
+    });
+  }
+
+  document.getElementById('picker').classList.add('open');
+}
+
+function closePicker() {
+  document.getElementById('picker').classList.remove('open');
+  pendingSwap = null;
+}
+
+function filteredDrills(type) {
+  const fits = d => d.minPlayers <= playerCount && (!d.maxPlayers || d.maxPlayers >= playerCount);
+  if (type === 'warmup') return DRILL_LIBRARY.warmups.filter(fits);
+  if (type === 'smallSided') return DRILL_LIBRARY.smallSided.filter(fits);
+  return DRILL_LIBRARY.stations.filter(fits);
+}
+
+function applySwap(item) {
+  if (!pendingSwap || openWeekIdx === null) return;
+  const { type, stationIdx } = pendingSwap;
+  const w = weekData[openWeekIdx];
+  if (type === 'warmup') {
+    w.warmup = { name: item.name, duration: '8 min', desc: item.desc };
+  } else if (type === 'station') {
+    w.stations[stationIdx] = { name: item.name, duration: '8 min', desc: item.desc };
+  } else if (type === 'smallSided') {
+    w.smallSided = { format: item.format || item.name, duration: '15 min', rules: item.desc };
+  }
+  closePicker();
+  renderModal(w);
+  renderGrid();
+  // Re-apply edit mode visuals
+  if (editMode) {
+    document.getElementById('modalBody').querySelectorAll('.swap-btn').forEach(b => b.style.display = 'inline-block');
+  }
+}
+
+// ─── BOOT ─────────────────────────────────────────────────────────────
+applyTheme();
+renderGrid();
+</script>
+</body>
+</html>

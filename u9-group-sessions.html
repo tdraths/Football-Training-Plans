@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U9 Soccer — Grouped Sessions</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f172a;color:#f1f5f9;min-height:100vh}
+
+/* Header */
+#header{padding:20px 16px 0;border-bottom:3px solid var(--accent,#3b82f6)}
+.header-inner{max-width:780px;margin:0 auto}
+.header-top{display:flex;align-items:center;gap:12px;padding-bottom:16px}
+.group-tabs{display:flex;gap:0}
+.group-tab{padding:10px 28px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s;border-radius:8px 8px 0 0;margin-right:3px;opacity:0.5}
+.group-tab.active{opacity:1}
+
+/* Main */
+#main{max-width:780px;margin:0 auto;padding:24px 14px}
+
+/* Session selector */
+.session-nav{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.session-btn{padding:7px 16px;border-radius:8px;border:2px solid rgba(255,255,255,0.15);background:transparent;color:#94a3b8;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.15s}
+.session-btn.active{border-color:var(--accent);color:#fff;background:var(--accent)}
+
+/* Session card */
+.session-card{background:#1e293b;border-radius:14px;overflow:hidden;border:2px solid var(--accent)}
+.session-header{padding:18px 20px;background:var(--accent)}
+.session-header h2{font-size:18px;font-weight:800;color:#fff;margin-bottom:4px}
+.session-header p{font-size:12px;color:rgba(255,255,255,0.75)}
+.session-tags{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.stag{background:rgba(255,255,255,0.2);color:#fff;border-radius:5px;padding:2px 9px;font-size:11px}
+
+/* Blocks */
+.session-body{padding:20px}
+.block{margin-bottom:16px;border-radius:10px;overflow:hidden}
+.block-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px}
+.block-title{font-size:11px;font-weight:800;letter-spacing:1px}
+.block-duration{font-size:11px;background:rgba(0,0,0,0.3);border-radius:5px;padding:2px 8px;color:rgba(255,255,255,0.8)}
+.block-body{padding:14px 14px 16px;background:#0f172a}
+.block-name{font-size:15px;font-weight:700;color:#f1f5f9;margin-bottom:6px}
+.block-desc{font-size:13px;color:#94a3b8;line-height:1.65}
+.block-tip{font-size:12px;color:#64748b;margin-top:8px;font-style:italic;padding-top:8px;border-top:1px solid #1e293b}
+.block-tip strong{color:#475569;font-style:normal}
+
+/* Focus banner */
+.focus-banner{background:#0f172a;border-radius:8px;padding:10px 14px;margin-bottom:16px;border-left:3px solid var(--accent)}
+.focus-label{font-size:10px;font-weight:800;color:var(--accent);letter-spacing:1px;margin-bottom:3px}
+.focus-text{font-size:13px;color:#cbd5e1;line-height:1.5}
+
+/* Coaching notes */
+.notes-block{background:#0f172a;border-radius:10px;padding:14px;margin-bottom:16px;border:1px solid #334155}
+.notes-title{font-size:11px;font-weight:800;color:#64748b;letter-spacing:1px;margin-bottom:8px}
+.note-item{font-size:12px;color:#94a3b8;line-height:1.6;padding:3px 0;display:flex;gap:8px}
+.note-item::before{content:'→';color:var(--accent);flex-shrink:0}
+
+/* Group philosophy strip */
+.philosophy{background:#1e293b;border-radius:10px;padding:14px 16px;margin-bottom:20px;border-left:4px solid var(--accent)}
+.philosophy-title{font-size:11px;font-weight:800;color:var(--accent);letter-spacing:1px;margin-bottom:6px}
+.philosophy-text{font-size:13px;color:#94a3b8;line-height:1.6}
+
+/* Progression note */
+.progression{background:#1e293b;border-radius:8px;padding:12px 14px;margin-top:16px;display:flex;gap:10px;align-items:flex-start}
+.prog-icon{font-size:18px;flex-shrink:0}
+.prog-text{font-size:12px;color:#64748b;line-height:1.5}
+.prog-text strong{color:#94a3b8}
+
+@media(max-width:480px){
+  .group-tab{padding:8px 16px;font-size:13px}
+  .session-header h2{font-size:16px}
+  .block-name{font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <span style="font-size:26px">⚽</span>
+      <div>
+        <h1 style="font-size:19px;font-weight:800;color:#fff">U9 Soccer — Skill Group Sessions</h1>
+        <p style="font-size:12px;color:#94a3b8;margin-top:2px">10 players · 1 hour · Groups A, B &amp; C · 4 sessions each</p>
+      </div>
+    </div>
+    <div class="group-tabs">
+      <button class="group-tab active" id="tabA" onclick="setGroup('A')">Group A</button>
+      <button class="group-tab" id="tabB" onclick="setGroup('B')">Group B</button>
+      <button class="group-tab" id="tabC" onclick="setGroup('C')">Group C</button>
+    </div>
+  </div>
+</div>
+
+<div id="main"></div>
+
+<script>
+const GROUPS = {
+
+A: {
+  colour: '#7c3aed',
+  label: 'Group A — Higher Skill & Strategy',
+  philosophy: 'These players can already do the basics. The focus here is quality, intelligence, and being hard to play against. Push them technically and tactically. The game should feel like a challenge, not a comfort zone.',
+  sessions: [
+    {
+      title: 'Session 1 — 1v1 Mastery & Creating Chances',
+      theme: 'Winning individual battles and turning them into opportunities',
+      blocks: [
+        {
+          type: 'warmup', label: '🌡️ WARM-UP', duration: '8 min',
+          name: 'Rondo 4v2',
+          desc: 'Two groups of 6. 4 players keep the ball from 2 defenders in a 10x10m box. If a defender wins it, they swap with the player who lost it. No standing still — the 4 must constantly move to create passing angles. Count how long they keep it.',
+          tip: 'Coach focus: are players moving before they receive, or after? Movement before is the sign of a good player.'
+        },
+        {
+          type: 'skill', label: '💡 SKILL FOCUS', duration: '12 min',
+          name: '1v1 Dribbling Progressions',
+          desc: 'Split into 5 pairs. Phase 1 (4 min): Attacker dribbles at a standing defender — must beat them using a skill. Focus on decisiveness, not just the trick. Phase 2 (4 min): Defender now at half-pace, can shuffle. Phase 3 (4 min): Full 1v1 in a 6x8m channel to a line. Both compete.',
+          tip: 'Key coaching point: most U9 A-group players know the trick but hesitate. Push them to commit to the move early, not at the last second.'
+        },
+        {
+          type: 'game', label: '🎮 COACHED GAME', duration: '20 min',
+          name: '4v4 — 1v1 Reward Rules',
+          desc: 'Normal 4v4 with small goals. Rules: a goal scored after dribbling past an opponent counts double. A goal scored after a first-time pass combination (one-two) also counts double. Coach freezes play 2–3 times to ask: "Could you have taken that player on there? What did you see?"',
+          tip: 'Freeze moments: look for missed 1v1 opportunities — when was a player free to take someone on but passed instead out of habit?'
+        },
+        {
+          type: 'free', label: '🏃 FREE PLAY', duration: '15 min',
+          name: '5v5 — No Restrictions',
+          desc: 'Full free play. No coaching during this block. Let them express everything from the session without interruption. Coach watches, takes notes for the cool-down chat.',
+          tip: null
+        },
+        {
+          type: 'chat', label: '💬 COOL-DOWN CHAT', duration: '5 min',
+          name: 'What Did You See?',
+          desc: 'Seated circle. Two questions: (1) "Who beat their player today — what did you do?" (2) "Who should have taken their player on but passed instead — why?" Create a culture of reflecting on decisions, not just outcomes.',
+          tip: null
+        }
+      ],
+      coachingNotes: [
+        'A players often pass out of habit when they should take someone on — challenge this repeatedly',
+        'Praise decisiveness over perfection. A committed failed skill attempt is better than hesitation',
+        'In the coached game, track who creates chances through individual skill vs team play'
+      ],
+      progression: 'Session 2 builds on 1v1 by adding what happens after you beat your player — combinations and finishing.'
+    },
+    {
+      title: 'Session 2 — Combination Play & Final Third',
+      theme: 'What to do after winning a 1v1 — combining to finish',
+      blocks: [
+        {
+          type: 'warmup', label: '🌡️ WARM-UP', duration: '8 min',
+          name: 'One-Two Circle',
+          desc: 'Players in a circle of 8, 2 in the middle. One outside player passes to a middle player who plays it first-time back, then the outside player immediately sprints to a new position. Middle player finds the next outside player to one-two with. Continuous. Both middle players work simultaneously.',
+          tip: 'If they struggle with first-time passes, allow one touch to control. The movement after the pass is more important than the touch quality here.'
+        },
+        {
+          type: 'skill', label: '💡 SKILL FOCUS', duration: '12 min',
+          name: 'Give-and-Go Combinations to Finish',
+          desc: 'Groups of 3. A dribbles toward a cone (defender). Passes to B (wide). B plays first time back into A\'s run. A shoots. Phase 2: add a real passive defender at the cone. Phase 3: defender is semi-active — can try to intercept B\'s return pass. Rotate roles every 3 minutes.',
+          tip: 'The key mistake: A passes to B then watches. A must sprint immediately without waiting to see if B receives. Enforce this strictly with A-group.'
+        },
+        {
+          type: 'game', label: '🎮 COACHED GAME', duration: '20 min',
+          name: '4v4 — Combination Goals Count Double',
+          desc: 'Normal 4v4. Goals from a clear one-two or give-and-go combination count double. Coach awards it live. Every 5–6 minutes, freeze play and ask: "Who had a chance to play a one-two there? What stopped it?" Reset and go.',
+          tip: 'Watch for: players who receive and immediately look to shoot rather than check if a combination is on. Freeze and replay those moments.'
+        },
+        {
+          type: 'free', label: '🏃 FREE PLAY', duration: '15 min',
+          name: '5v5 — No Restrictions',
+          desc: 'Free play. Coach watches for combinations happening naturally — call them out positively but don\'t interrupt. Note who initiates combinations and who responds to them.',
+          tip: null
+        },
+        {
+          type: 'chat', label: '💬 COOL-DOWN CHAT', duration: '5 min',
+          name: 'Combination Review',
+          desc: 'Two questions: (1) "Name one time you completed a one-two today." (2) "Name one time you could have played a one-two but didn\'t." Builds the mental habit of looking for combinations throughout a game.',
+          tip: null
+        }
+      ],
+      coachingNotes: [
+        'A-group players may try to over-complicate the combination — keep it simple: pass, move, receive, shoot',
+        'The sprint after passing is the hardest habit to build. Be relentless about it',
+        'Some A-group players will be natural dribblers (session 1) and some natural passers. Identify and challenge both'
+      ],
+      progression: 'Session 3 introduces pressing and transitions — what happens when they don\'t have the ball.'
+    },
+    {
+      title: 'Session 3 — Pressing & Transitions',
+      theme: 'Being dangerous without the ball — pressing and counter-attacking',
+      blocks: [
+        {
+          type: 'warmup', label: '🌡️ WARM-UP', duration: '8 min',
+          name: 'Win It & Go',
+          desc: '2 teams of 5 in a large grid. One team defends a line. The other attacks. When the defending team wins the ball, they immediately counter-attack the opposite end — no pause, no celebration. The moment of winning the ball is the starting gun. First team to 5 counter-attacks wins.',
+          tip: 'Key phrase: "Don\'t celebrate — GO." Make this a mantra for the session.'
+        },
+        {
+          type: 'skill', label: '💡 SKILL FOCUS', duration: '12 min',
+          name: 'Coordinated Pressing — 2-Player Press',
+          desc: 'Two defenders press 2 attackers who keep possession in a small box. Pressing pair must work together: one goes tight to the ball, the other cuts the best pass option. 5-second limit to win — reset if they don\'t. Phase 2: add a third attacker — pressing pair must now choose which option to block.',
+          tip: 'Most common mistake: both defenders chase the ball together. Teach: one presses, one covers. Drill this with an instruction every rep until it becomes automatic.'
+        },
+        {
+          type: 'game', label: '🎮 COACHED GAME', duration: '20 min',
+          name: '4v4 — Counter-Attack Golden Goal',
+          desc: 'Normal 4v4. Any goal scored within 5 seconds of winning the ball counts as a golden goal (3 points). Regular goal = 1 point. This creates a constant incentive to transition immediately on winning possession. Freeze play every 5–6 min to identify: "Who spotted the trigger to press? Who reacted to winning the ball fastest?"',
+          tip: 'Look for pressing triggers — the moment a player should have pressed but walked. Freeze and ask why they didn\'t go.'
+        },
+        {
+          type: 'free', label: '🏃 FREE PLAY', duration: '15 min',
+          name: '5v5 — No Restrictions',
+          desc: 'Free play. Watch: does the pressing from the session carry into free play naturally? Note who does and who reverts. This tells you a lot about where each player is.',
+          tip: null
+        },
+        {
+          type: 'chat', label: '💬 COOL-DOWN CHAT', duration: '5 min',
+          name: 'Pressing & Transition',
+          desc: 'Two questions: (1) "When did you press today — what told you to go?" (2) "When you won the ball, what\'s the first thing you looked for?" Build the language: trigger → press → win → immediate attack.',
+          tip: null
+        }
+      ],
+      coachingNotes: [
+        'A-group players often press individually — the challenge is getting them to press as a coordinated pair',
+        'Transition speed separates good young players from great ones. Push hard on the "don\'t celebrate — go" habit',
+        'Some players will naturally read the trigger to press. Others will wait to be told. Challenge the waiters'
+      ],
+      progression: 'Session 4 brings everything together — game intelligence, positioning, and reading the whole picture.'
+    },
+    {
+      title: 'Session 4 — Game Intelligence & Reading Play',
+      theme: 'Thinking one step ahead — positioning, scanning, and making better decisions',
+      blocks: [
+        {
+          type: 'warmup', label: '🌡️ WARM-UP', duration: '8 min',
+          name: 'Freeze & Decide Rondo',
+          desc: '4v2 rondo in a 10x10m box. Coach blows whistle every 30 seconds and freezes play. Points to one player and asks: "What would you do right now and why?" Player answers. All continue. The 2 defenders must also answer when frozen — "where would you pressure and why?"',
+          tip: 'No wrong answers. The habit of thinking before acting — even for 1 second — is what separates good players from instinctive ones.'
+        },
+        {
+          type: 'skill', label: '💡 SKILL FOCUS', duration: '12 min',
+          name: 'Scanning & Positioning Without the Ball',
+          desc: 'Phase 1 (4 min): No ball. 5 attackers move in the grid. Coach calls freeze. Points to a defender position — where should each attacker be to offer a passing option? Walk through it. Phase 2 (4 min): Ball added. 5v3 — attackers try to keep the ball. Coach freezes and asks defenders: "Who\'s the most dangerous attacker right now?" Phase 3 (4 min): 3v2 to goal. Attacker must say out loud what they see before passing.',
+          tip: 'Push players to verbalise: "I see X open on my left." Saying it out loud makes the thought process conscious. Over time it becomes automatic and silent.'
+        },
+        {
+          type: 'game', label: '🎮 COACHED GAME', duration: '20 min',
+          name: '4v4 — Decision Points',
+          desc: 'Normal 4v4. After each goal (or missed chance), coach freezes immediately and asks the player involved: "What did you see before you acted?" The aim is building a habit of scanning before receiving. Also introduce: wide goals — 2 mini goals on each end line so players must choose which to attack.',
+          tip: 'The 2-goal rule forces scanning. Watch who glances before receiving vs who gets the ball then looks. Freeze when you see the difference and highlight it.'
+        },
+        {
+          type: 'free', label: '🏃 FREE PLAY', duration: '15 min',
+          name: '5v5 — Coach Commentates',
+          desc: 'Free play but coach commentates out loud — not coaching, just describing: "Player A has two options here... chose the left one... Player B spotted the space early." Teaches players to hear the game described from outside their own view.',
+          tip: null
+        },
+        {
+          type: 'chat', label: '💬 COOL-DOWN CHAT', duration: '5 min',
+          name: 'The Full Picture',
+          desc: 'Ask each player: "What\'s one thing you looked for today that you don\'t normally look for?" Then: "What do you want to work on most next session?" Gets players thinking about their own development — not just whether they scored.',
+          tip: null
+        }
+      ],
+      coachingNotes: [
+        'Game intelligence can\'t be rushed — these sessions plant seeds. Don\'t expect it to click immediately',
+        'The scanning habit is the single most valuable thing you can teach A-group players at this age',
+        'Some players will find the verbalising exercise uncomfortable. That discomfort is the learning'
+      ],
+      progression: 'Next block (sessions 5–8) will build on these 4: deeper pressing shape, wide play, set pieces, and how to play when tired.'
+    }
+  ]
+},
+
+B: {
+  colour: '#0891b2',
+  label: 'Group B — Cohesion & Understanding Basics',
+  philosophy: 'These players know the game but it\'s still a bit chaotic — everyone chasing the ball, not sure when to pass or dribble, and no real sense of how to play as a unit. The focus is building simple habits: support your teammate, pass when it helps, dribble when you\'re free, and understand your basic role.',
+  sessions: [
+    {
+      title: 'Session 1 — Support Play & Moving Together',
+      theme: 'Understanding that the player without the ball matters as much as the one with it',
+      blocks: [
+        {
+          type: 'warmup', label: '🌡️ WARM-UP', duration: '8 min',
+          name: 'Passing on the Move',
+          desc: 'All 10 players in pairs, spread across the pitch. Pass and move continuously — receive, control, pass, move. No stopping. After 3 minutes, add a rule: you must call your partner\'s name before every pass. No name = no pass.',
+          tip: 'Watch for pairs who stop and wait. The movement after the pass is the whole point — keep reminding: "pass and GO."'
+        },
+        {
+          type: 'skill', label: '💡 SKILL FOCUS', duration: '12 min',
+          name: 'Always Have a Passing Option',
+          desc: 'Groups of 3. Player A has the ball. B and C must always be in different positions — not both in the same spot. A dribbles freely. B and C must move continuously to stay open. Every 30 seconds, coach calls "freeze" — is B in a different position from C? Can A see both? Increase to 3v1 (add a light defender to A) after 6 minutes.',
+          tip: 'The lesson: if you\'re not moving, your teammate has fewer options. Movement off the ball is not optional — it\'s your job when you don\'t have the ball.'
+        },
+        {
+          type: 'game', label: '🎮 COACHED GAME', duration: '20 min',
+          name: '4v4 — Pass Count Bonus',
+          desc: 'Normal 4v4. Every 5 consecutive passes earns a bonus point (count out loud together). Goals also count. Freeze play every 5 minutes: "Who was standing still just then? If you weren\'t moving, your team couldn\'t pass to you." Reset and go.',
+          tip: 'Freeze specifically when you see a player standing still while their teammate is under pressure. Ask the standing player: "Where should you be right now?"'
+        },
+        {
+          type: 'free', label: '🏃 FREE PLAY', duration: '15 min',
+          name: '5v5 — No Restrictions',
+          desc: 'Free play. No coaching. Watch: do players naturally spread out, or do they still bunch? Note the names of those who spread and those who don\'t — address in the chat.',
+          tip: null
+        },
+        {
+          type: 'chat', label: '💬 COOL-DOWN CHAT', duration: '5 min',
+          name: 'The Moving Player',
+          desc: 'Ask the group: "When you didn\'t have the ball today, what did you do?" Most will say "waited". Introduce the idea: when you don\'t have the ball, your job is to make yourself useful — move to where your teammate needs you.',
+          tip: null
+        }
+      ],
+      coachingNotes: [
+        'B-group will cluster around the ball — this is normal and fixable. Patience with it',
+        'Don\'t criticise bunching. Ask questions instead: "Where else could you be right now?"',
+        'Celebrate every time a player makes a good off-ball run, even if the pass doesn\'t come to them'
+      ],
+      progression: 'Session 2 builds on support positions by introducing the basic idea of when to pass and when to dribble.'
+    },
+    {
+      title: 'Session 2 — Pass or Dribble? Making Simple Decisions',
+      theme: 'Reading the situation — when the pass helps and when to take someone on',
+      blocks: [
+        {
+          type: 'warmup', label: '🌡️ WARM-UP', duration: '8 min',
+          name: 'Traffic Lights with Decisions',
+          desc: 'All players dribble in a large grid. Red = stop (sole on ball). Green = dribble. Yellow = find a teammate and pass to them before continuing. Coach calls colours unpredictably. Yellow is the key one — players must look up, find a teammate, and pass quickly.',
+          tip: 'At Yellow, praise players who pass quickly and accurately. Gently remind those who dribble on at Yellow: "That was a pass moment."'
+        },
+        {
+          type: 'skill', label: '💡 SKILL FOCUS', duration: '12 min',
+          name: 'The Simple Decision Rule',
+          desc: 'Teach a simple rule: "If someone is marking you — pass. If you\'re free — dribble." Phase 1 (4 min): 1v0 — player dribbles freely. Coach calls "defender!" — player immediately passes to a teammate. Phase 2 (4 min): 2v1 — teach reading the overload: "You have a free player — find them." Phase 3 (4 min): 3v2 in a small grid — both rules apply live.',
+          tip: 'Simplify the language: "Marked? Pass. Free? Go." Repeat this throughout the session. B-group needs simple rules, not complex reasoning yet.'
+        },
+        {
+          type: 'game', label: '🎮 COACHED GAME', duration: '20 min',
+          name: '4v4 — Coach Calls "Marked!" or "Free!"',
+          desc: 'Normal 4v4. Occasionally, coach calls the name of a player on the ball and says "marked!" — they must pass immediately. Or "free!" — they must dribble forward. Unpredictable intervention trains the habit of reading the situation. Reduce interventions after 10 minutes and let them apply it themselves.',
+          tip: 'Don\'t over-intervene. 3–4 calls in the first half, then silence in the second half. See what they retained.'
+        },
+        {
+          type: 'free', label: '🏃 FREE PLAY', duration: '15 min',
+          name: '5v5 — No Restrictions',
+          desc: 'Free play. Watch for the rule being applied naturally. A player who passes when marked and dribbles when free is showing real understanding — call it out positively at the end.',
+          tip: null
+        },
+        {
+          type: 'chat', label: '💬 COOL-DOWN CHAT', duration: '5 min',
+          name: 'Marked or Free?',
+          desc: 'Ask 3 players: "Tell me one moment today when you were marked. What did you do?" Then: "Tell me one moment when you were free. What did you do?" Build the habit of labelling situations as they play.',
+          tip: null
+        }
+      ],
+      coachingNotes: [
+        'B-group often passes when under no pressure at all — habit, not reading. Challenge this gently',
+        'Also common: dribbling into pressure when a free player is screaming for the ball. Freeze and highlight',
+        'The "marked/free" rule is deliberately simple. Don\'t introduce anything more complex until this is automatic'
+      ],
+      progression: 'Session 3 introduces roles — the idea that different players have different jobs at different moments.'
+    },
+    {
+      title: 'Session 3 — Simple Roles & Positions',
+      theme: 'Understanding that not everyone does the same thing at the same time',
+      blocks: [
+        {
+          type: 'warmup', label: '🌡️ WARM-UP', duration: '8 min',
+          name: 'Shape Walk-Through',
+          desc: 'Before touching a ball, walk through a basic shape on a small pitch: 1 defender, 2 midfielders, 1 forward, 1 GK. Walk each player to their position. Show where they stand when: (a) we have the ball, (b) they have the ball. Walk through it twice — no ball, just positions.',
+          tip: 'Keep it very simple. Don\'t use formation language yet. Just: "when we have it, you stand here. When they have it, you come back to here."'
+        },
+        {
+          type: 'skill', label: '💡 SKILL FOCUS', duration: '12 min',
+          name: 'Role Rotation Drill',
+          desc: 'Assign 4 players roles: defender, 2 midfielders, forward. Phase 1 (4 min): Coach passes to each position in order. Each player must play appropriately for their role — forward shoots, midfielder passes, defender clears. Phase 2 (4 min): Defender gets the ball and must find a midfielder. Midfielder must find the forward. Forward must shoot. Simple pipeline. Phase 3 (4 min): Roles rotate — each player plays a different position.',
+          tip: 'The purpose is not to lock players into positions forever — it\'s to show them that position determines your job. A midfielder and a forward do different things at the same moment.'
+        },
+        {
+          type: 'game', label: '🎮 COACHED GAME', duration: '20 min',
+          name: '4v4 — Loose Positions',
+          desc: 'Normal 4v4 but each player has a loose position: "you\'re our forward today", "you\'re playing at the back." No rigid lines — just awareness of a role. Freeze every 5–6 minutes: "Goalkeeper, what should you be doing right now? Forward, where should you be?" One freeze per player over 20 minutes.',
+          tip: 'The questions are the teaching, not the answers. If a player doesn\'t know, don\'t tell them immediately — ask the group first.'
+        },
+        {
+          type: 'free', label: '🏃 FREE PLAY', duration: '15 min',
+          name: '5v5 — Players Choose Positions',
+          desc: 'Before free play, each player chooses their own position for this game. They tell you what it is. Then play. At the end, ask: "Did you play in your position? Did it help?"',
+          tip: null
+        },
+        {
+          type: 'chat', label: '💬 COOL-DOWN CHAT', duration: '5 min',
+          name: 'Your Role Today',
+          desc: 'Ask each player: "What was your position today? Name one thing a player in that position should do that you did, and one thing you could do better." Builds individual awareness of roles without making it rigid.',
+          tip: null
+        }
+      ],
+      coachingNotes: [
+        'B-group players will drift out of position — this is normal. Gently redirect rather than stop play',
+        'Some players will resist a position they don\'t like. Let them express it, then explain why the role matters',
+        'Celebrate a defender who makes a great clearance as much as a forward who scores — role execution is the goal'
+      ],
+      progression: 'Session 4 brings the three sessions together: support play, decisions, and roles — in a game that requires all three.'
+    },
+    {
+      title: 'Session 4 — Putting It All Together',
+      theme: 'Moving together, deciding well, and playing in a role — all at once',
+      blocks: [
+        {
+          type: 'warmup', label: '🌡️ WARM-UP', duration: '8 min',
+          name: 'Rondo With Roles',
+          desc: '3v1 rondo. The 3 outside players each have a colour bib and a role name (blue=defender, yellow=midfielder, red=forward). The ball must travel in order: blue → yellow → red → blue. If the defender wins it, they join the outside and the player who lost it goes in the middle.',
+          tip: 'This combines the support positioning from session 1 with the role awareness from session 3. It\'s deliberately combining all three lessons.'
+        },
+        {
+          type: 'skill', label: '💡 SKILL FOCUS', duration: '12 min',
+          name: 'The Full Attack Pattern',
+          desc: 'Walk through a simple attacking sequence: (1) defender gets ball, looks for midfielder. (2) Midfielder receives, checks if forward is free. (3) If free — plays forward. If marked — keeps it and moves. (4) Forward receives and shoots. Walk through it without defenders first. Then add 2 passive defenders. Then 2 semi-active. The whole thing must click as a sequence.',
+          tip: 'Don\'t rush to add defenders. The sequence should flow before you add pressure. B-group needs the pattern to feel natural first.'
+        },
+        {
+          type: 'game', label: '🎮 COACHED GAME', duration: '20 min',
+          name: '4v4 — Everything Applies',
+          desc: 'Normal 4v4 with loose positions. No special rules. Coach\'s only interventions: freeze when someone is in a great support position and point it out, freeze when someone makes a great decision, and freeze when all three lessons collide in one move (player in position, makes a decision, supports a teammate). Celebrate those moments loudly.',
+          tip: 'You\'re looking for one moment per game where all three sessions click at once. When you see it, freeze and make a big deal of it.'
+        },
+        {
+          type: 'free', label: '🏃 FREE PLAY', duration: '15 min',
+          name: '5v5 — No Restrictions',
+          desc: 'Free play. Completely uninterrupted. Watch how much has carried over from 4 sessions. Even if it\'s messy, you\'ll see flashes of the three lessons in play.',
+          tip: null
+        },
+        {
+          type: 'chat', label: '💬 COOL-DOWN CHAT', duration: '5 min',
+          name: 'Three Things',
+          desc: 'Each player names: (1) one time they moved to support a teammate, (2) one time they made a good pass-or-dribble decision, (3) one time they knew what their role needed them to do. Even if the answers are simple — the fact that they can identify them means the lessons are in.',
+          tip: null
+        }
+      ],
+      coachingNotes: [
+        'Don\'t expect B-group to be perfectly cohesive after 4 sessions. But you should see patches of it — celebrate those',
+        'The players who progress fastest are usually the ones who listen to the cool-down chats. Make those 5 minutes count',
+        'Some B-group players may be close to A-group level by session 4. Note who\'s ready to move up'
+      ],
+      progression: 'Next block (sessions 5–8): build on the attacking pattern, introduce defending as a team, and begin working on transitions.'
+    }
+  ]
+},
+
+C: {
+  colour: '#16a34a',
+  label: 'Group C — Basics, Rules & Building Confidence',
+  philosophy: 'These players need two things above everything else: to feel comfortable with a ball at their feet, and to enjoy themselves. Every drill should feel achievable. Every session should end with every player having smiled. Don\'t rush toward tactics — build joy and confidence first. The skills will follow.',
+  sessions: [
+    {
+      title: 'Session 1 — Me and My Ball',
+      theme: 'Getting comfortable — every player with a ball, every player involved',
+      blocks: [
+        {
+          type: 'warmup', label: '🌡️ WARM-UP', duration: '8 min',
+          name: 'Body Part Ball Touch',
+          desc: 'Every player has a ball. Coach calls out a body part — players must touch or balance the ball on that part. Knee, shoulder, toe, elbow, head (gently), tummy. No wrong answers. End with 2 minutes of free dribbling — go anywhere, do anything.',
+          tip: 'Keep it light and funny. Call out silly body parts — "left elbow!" The goal is laughter and comfort, not technique.'
+        },
+        {
+          type: 'skill', label: '💡 SKILL FOCUS', duration: '12 min',
+          name: 'Sole Rolls & Toe Taps',
+          desc: 'Phase 1 (4 min): Sole rolls — every player rolls the ball back and forth with the sole of each foot, standing still. Count how many in 20 seconds. Phase 2 (4 min): Toe taps — alternate toe taps on top of the ball, left-right-left-right. Count rhythm. Phase 3 (4 min): Combine — sole roll, sole roll, two toe taps. The sequence. No pressure on speed — focus on touch and confidence.',
+          tip: 'C-group players often tense up when asked to perform. Keep the atmosphere playful. If a player is struggling, crouch down beside them and do it alongside them.'
+        },
+        {
+          type: 'game', label: '🎮 COACHED GAME', duration: '20 min',
+          name: '3v3 — Everyone Scores',
+          desc: 'Three teams of 3 (one player rotates as referee). Two teams play at a time. Small goals, no GKs. The only coaching rule: every goal is celebrated equally regardless of which team scores. Make it easy to score — small pitch, no GK, wide goals. First games should feel like success.',
+          tip: 'Your job in this game: make every player feel good about something. Even if they don\'t score — "great effort", "good try", "loved that move". Every player leaves feeling noticed.'
+        },
+        {
+          type: 'free', label: '🏃 FREE PLAY', duration: '15 min',
+          name: '5v5 — Just Play',
+          desc: 'Simple 5v5. Goals at both ends. No restrictions. Coach plays WITH them if numbers are odd — joining a team and being deliberately average. Makes it less intimidating.',
+          tip: null
+        },
+        {
+          type: 'chat', label: '💬 COOL-DOWN CHAT', duration: '5 min',
+          name: 'Name One Thing You Did',
+          desc: 'Ask every player — every single one — to name one thing they did today. It can be anything: "I kicked the ball", "I did a toe tap", "I scored." No answer is too small. This is the most important 5 minutes of the session.',
+          tip: null
+        }
+      ],
+      coachingNotes: [
+        'Some C-group players may never have played before. Start from zero and be patient',
+        'Never single a player out negatively — not even in a funny way. Confidence is fragile at this level',
+        'If a player is reluctant to participate, let them watch from close by. Never force. Invite.',
+        'Goal: every player touches the ball at least 15–20 times during the session'
+      ],
+      progression: 'Session 2 builds on sole rolls and toe taps with the simplest passing — rolling the ball to a partner and receiving it back.'
+    },
+    {
+      title: 'Session 2 — My Ball, Your Ball — Passing Basics',
+      theme: 'The simplest passing — rolling the ball to a friend and receiving it back',
+      blocks: [
+        {
+          type: 'warmup', label: '🌡️ WARM-UP', duration: '8 min',
+          name: 'Traffic Lights',
+          desc: 'All players dribble in a large grid. Red = stop with sole on ball. Yellow = walk slowly with ball. Green = dribble at their own comfortable pace. No racing. Call colours in a fun, unpredictable order. Praise anyone who stops cleanly at Red.',
+          tip: 'C-group may struggle to stop cleanly. That\'s fine — the sole stop is a skill in itself. Demonstrate it, then do it together.'
+        },
+        {
+          type: 'skill', label: '💡 SKILL FOCUS', duration: '12 min',
+          name: 'Pass & Receive with the Inside of the Foot',
+          desc: 'Phase 1 (4 min): Pairs 4m apart. Roll the ball to your partner using the inside of the foot. Receive with the sole or inside. No pressure — just get it there. Phase 2 (4 min): Move back to 6m. Same thing. Phase 3 (4 min): Walk alongside each other and pass while moving. No stopping.',
+          tip: 'Teach the inside of the foot with a simple image: "turn your foot out like a penguin." Have them walk like penguins for 10 seconds — they\'ll laugh and remember.'
+        },
+        {
+          type: 'game', label: '🎮 COACHED GAME', duration: '20 min',
+          name: '3v3 — Gates Passing Game',
+          desc: 'No goals. Scatter 8 small gates (two cones, 1m wide) around the area. Teams score by passing through a gate to a teammate. Count gates scored. No goalkeepers, no big goals — just gates. Takes the GK question off the table and focuses all attention on passing.',
+          tip: 'C-group doesn\'t need the complexity of goals, GKs, and offsides yet. The gates game gives them success quickly and keeps everyone moving.'
+        },
+        {
+          type: 'free', label: '🏃 FREE PLAY', duration: '15 min',
+          name: '5v5 — Normal Game with Wide Goals',
+          desc: 'Normal game but use very wide goals (3m+ each) so scoring is easy and frequent. GKs optional — if players want to be in goal, fine. If not, leave them open. The point is: scoring feels good and should happen a lot at this stage.',
+          tip: null
+        },
+        {
+          type: 'chat', label: '💬 COOL-DOWN CHAT', duration: '5 min',
+          name: 'Pass or Dribble?',
+          desc: 'Introduce the simplest idea: "Sometimes passing helps your team. Sometimes dribbling is better. Today we practised passing. Did anyone pass to a teammate today? Did it help?" Keep it conversational — not a lecture.',
+          tip: null
+        }
+      ],
+      coachingNotes: [
+        'Some C-group players will kick rather than pass — that\'s fine. The inside of the foot takes weeks to feel natural',
+        'In the gates game, some players won\'t know which gates to aim for. Walk with them for the first minute and point out open gates',
+        'If a player scores a gate goal, make a big deal of it — high five, shout their name'
+      ],
+      progression: 'Session 3 introduces the basic rules of the game — what a foul is, why there are throw-ins, and what the GK does.'
+    },
+    {
+      title: 'Session 3 — The Rules of the Game',
+      theme: 'Understanding why the game works the way it does',
+      blocks: [
+        {
+          type: 'warmup', label: '🌡️ WARM-UP', duration: '8 min',
+          name: 'Dribble & Freeze',
+          desc: 'All players dribble freely. Coach whistles — everyone freezes with sole on ball. Coach picks one player to show any trick or dribble move. Everyone copies for 15 seconds. Then all continue. Builds the dribbling base before the rules session.',
+          tip: 'Let the players choose a move — however simple. If someone just does a toe tap, that\'s the move for everyone. Equal participation.'
+        },
+        {
+          type: 'skill', label: '💡 SKILL FOCUS', duration: '12 min',
+          name: 'The Rules Walk-Through',
+          desc: 'Use the pitch to walk through the rules. Phase 1 (3 min): Throw-ins — demonstrate and have everyone do 3 throw-ins each. Phase 2 (3 min): Goal kicks — what happens when the ball goes out behind the goal. Everyone takes one. Phase 3 (3 min): What is a foul — demonstrate one clearly (pushing, tripping). Show the free kick. Phase 4 (3 min): The GK — what they can do and what they can\'t. Everyone has 60 seconds as GK.',
+          tip: 'Make the foul demonstration funny — have a player "trip" you. The laugh makes it memorable. Then show the correct way.'
+        },
+        {
+          type: 'game', label: '🎮 COACHED GAME', duration: '20 min',
+          name: '4v4 — Rules in Practice',
+          desc: 'Normal game, but every time a rule situation comes up naturally (throw-in, goal kick, foul), pause the game briefly: "This is a throw-in — [player name], show us how." Then continue. Don\'t stop for every single one — pick 3–4 natural moments per game. Let the game flow otherwise.',
+          tip: 'The key: use the natural moments, don\'t manufacture them. Real situations teach rules better than demonstrations.'
+        },
+        {
+          type: 'free', label: '🏃 FREE PLAY', duration: '15 min',
+          name: '5v5 — Self-Refereed',
+          desc: 'Players referee their own game. Coach is available to help if something is genuinely unclear, but encourages the players to call it themselves. Builds rule understanding through application.',
+          tip: null
+        },
+        {
+          type: 'chat', label: '💬 COOL-DOWN CHAT', duration: '5 min',
+          name: 'Rules Quiz',
+          desc: 'Ask 4 quick questions: "What is a throw-in?" "What is a foul?" "What can the GK do that other players can\'t?" "What happens when the ball goes out behind the goal?" Keep it light — this is a quiz, not a test. Praise every answer.',
+          tip: null
+        }
+      ],
+      coachingNotes: [
+        'Some C-group players won\'t know ANY rules. Start from absolute zero — don\'t assume knowledge',
+        'Don\'t try to teach all rules in one session. Throw-ins, goal kicks, fouls, and GK basics is enough',
+        'Offside is NOT covered in this session — it\'s too complex at this stage and will confuse more than help',
+        'If players argue about calls in self-refereed play, see it as a learning moment — they\'re engaging with the rules'
+      ],
+      progression: 'Session 4 introduces the idea of positions — why players stand in different parts of the pitch.'
+    },
+    {
+      title: 'Session 4 — My Space on the Pitch',
+      theme: 'Understanding that different players have different areas — and why that helps everyone',
+      blocks: [
+        {
+          type: 'warmup', label: '🌡️ WARM-UP', duration: '8 min',
+          name: 'Chase the Tail',
+          desc: 'Bib tucked in shorts as a tail. Players protect their tail and chase others. No ball. Pure fun and movement. No elimination — if your tail is taken, tuck it back in and keep going. Everyone plays the whole time.',
+          tip: 'This warm-up is deliberately high-energy and simple. After two sessions of learning rules and passing technique, they need to just run around and enjoy themselves.'
+        },
+        {
+          type: 'skill', label: '💡 SKILL FOCUS', duration: '12 min',
+          name: 'Find Your Space',
+          desc: 'Phase 1 (4 min): No ball. Coach divides the pitch into 3 sections: defence, middle, attack. Players walk into their section and stay there for 90 seconds. Shuffle sections. Introduce the names: defenders stay back, attackers go forward, midfielders link them. Phase 2 (4 min): Ball added. Players must stay in their section. Simple passing within sections. Phase 3 (4 min): Free movement but coach says "where is your home?" and players point to their section.',
+          tip: 'Don\'t be too strict about section boundaries. The concept — that space is shared and positions have meaning — is the lesson. Not the rigid lines.'
+        },
+        {
+          type: 'game', label: '🎮 COACHED GAME', duration: '20 min',
+          name: '4v4 — Loose Positions, Wide Goals',
+          desc: 'Normal 4v4 with wide goals. Each player has a loose position: "you\'re our goalkeeper today", "you\'re our forward." One or two very gentle position reminders during the game: "Remember [name], your job is to stay forward" or "Defenders, can you help [GK name] back there?" Never more than 1 reminder per player per game.',
+          tip: 'Loose and gentle. C-group doesn\'t need the discipline of holding positions — they need the concept that positions exist and help the team.'
+        },
+        {
+          type: 'free', label: '🏃 FREE PLAY', duration: '15 min',
+          name: '5v5 — Players Pick Their Own Position',
+          desc: 'Before the game, every player says what position they want to play. Coach writes it down. Play normally. At the end: "Did anyone play their position today? What did you do in that position?"',
+          tip: null
+        },
+        {
+          type: 'chat', label: '💬 COOL-DOWN CHAT', duration: '5 min',
+          name: 'What\'s Your Favourite Position?',
+          desc: 'Ask every player: "What position did you play today? Do you like it? What would you like to try next time?" This is about ownership and enjoyment — finding where they feel comfortable on the pitch.',
+          tip: null
+        }
+      ],
+      coachingNotes: [
+        'Many C-group players want to be forward or GK. Let them try it. Positions are tools, not life sentences at U9',
+        'Some players won\'t want to play GK. Never assign a player to GK who doesn\'t want to be there',
+        'If a player flourishes in a position in session 4, note it — this is the beginning of finding their identity on the pitch',
+        'By end of session 4: every C-group player should be more comfortable with a ball, understand the basic rules, and have a rough sense of positions'
+      ],
+      progression: 'Next block (sessions 5–8): basic shooting technique, how to defend properly, simple passing patterns, and their first taste of a small-sided team game with all rules applied.'
+    }
+  ]
+}
+
+}; // end GROUPS
+
+// ─── RENDER ───────────────────────────────────────────────────────────
+let currentGroup = 'A';
+let currentSession = 0;
+
+const BLOCK_STYLES = {
+  warmup:  { bg: '#78350f', border: '#f59e0b', label_color: '#fbbf24' },
+  skill:   { bg: '#1e3a5f', border: '#3b82f6', label_color: '#60a5fa' },
+  game:    { bg: '#1a3a2a', border: '#10b981', label_color: '#34d399' },
+  free:    { bg: '#1e1b4b', border: '#8b5cf6', label_color: '#a78bfa' },
+  chat:    { bg: '#1c1c2e', border: '#64748b', label_color: '#94a3b8' },
+};
+
+function setGroup(g) {
+  currentGroup = g;
+  currentSession = 0;
+  ['A','B','C'].forEach(x => {
+    document.getElementById('tab'+x).classList.toggle('active', x===g);
+    document.getElementById('tab'+x).style.background = x===g ? GROUPS[x].colour : 'transparent';
+    document.getElementById('tab'+x).style.color = '#fff';
+  });
+  document.documentElement.style.setProperty('--accent', GROUPS[g].colour);
+  document.getElementById('header').style.borderBottomColor = GROUPS[g].colour;
+  renderMain();
+}
+
+function renderMain() {
+  const g = GROUPS[currentGroup];
+  const s = g.sessions[currentSession];
+  let html = '';
+
+  // Philosophy strip
+  html += `<div class="philosophy">
+    <div class="philosophy-title">${g.label}</div>
+    <div class="philosophy-text">${g.philosophy}</div>
+  </div>`;
+
+  // Session nav
+  html += '<div class="session-nav">';
+  g.sessions.forEach((sess, i) => {
+    html += `<button class="session-btn${i===currentSession?' active':''}" onclick="setSession(${i})">Session ${i+1}</button>`;
+  });
+  html += '</div>';
+
+  // Session card
+  html += `<div class="session-card">
+    <div class="session-header" style="background:${g.colour}">
+      <h2>${s.title}</h2>
+      <p>${s.theme}</p>
+      <div class="session-tags">
+        <span class="stag">⏱ 60 min</span>
+        <span class="stag">👦 10 players</span>
+        <span class="stag">⚽ U9</span>
+      </div>
+    </div>
+    <div class="session-body">`;
+
+  // Focus banner
+  html += `<div class="focus-banner">
+    <div class="focus-label">SESSION FOCUS</div>
+    <div class="focus-text">${s.theme}</div>
+  </div>`;
+
+  // Blocks
+  s.blocks.forEach(b => {
+    const style = BLOCK_STYLES[b.type];
+    html += `<div class="block" style="border:1px solid ${style.border}20">
+      <div class="block-header" style="background:${style.bg}">
+        <span class="block-title" style="color:${style.label_color}">${b.label}</span>
+        <span class="block-duration">${b.duration}</span>
+      </div>
+      <div class="block-body">
+        <div class="block-name">${b.name}</div>
+        <div class="block-desc">${b.desc}</div>
+        ${b.tip ? `<div class="block-tip"><strong>Coach note:</strong> ${b.tip}</div>` : ''}
+      </div>
+    </div>`;
+  });
+
+  // Coaching notes
+  html += `<div class="notes-block">
+    <div class="notes-title">📋 COACHING NOTES FOR THIS SESSION</div>`;
+  s.coachingNotes.forEach(n => {
+    html += `<div class="note-item">${n}</div>`;
+  });
+  html += '</div>';
+
+  // Progression
+  html += `<div class="progression">
+    <span class="prog-icon">→</span>
+    <div class="prog-text"><strong>Building toward:</strong> ${s.progression}</div>
+  </div>`;
+
+  html += '</div></div>'; // close session-body, session-card
+
+  document.getElementById('main').innerHTML = html;
+}
+
+function setSession(i) {
+  currentSession = i;
+  renderMain();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// Boot
+document.getElementById('tabA').style.background = GROUPS.A.colour;
+document.getElementById('tabA').style.color = '#fff';
+document.getElementById('tabB').style.color = '#fff';
+document.getElementById('tabC').style.color = '#fff';
+document.documentElement.style.setProperty('--accent', GROUPS.A.colour);
+renderMain();
+</script>
+</body>
+</html>
